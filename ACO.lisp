@@ -30,7 +30,7 @@
                 (LIST ;(1,0)   (1,1)     ...
                     (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST t (FLOAT 0)) )
                 (LIST ;(2,0)   ...
-                    (LIST t (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST t (FLOAT 0)) (LIST nil) (FLOAT 0) (LIST t (FLOAT 0)) )
+                    (LIST t (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST t (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST t (FLOAT 0)) )
                 )
 )   ;idk what is a good way to make a 40x60 maze without hardcoding
 
