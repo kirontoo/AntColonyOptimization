@@ -60,3 +60,11 @@ xxxx
 )
 
 (GRID-TO-LIST gridStr)
+
+(DEFUN DELTAMAX (a b) ;; each param is a coordinate (x y)
+	(RETURN-FROM DELTAMAX (ABS (- (MAX (CAR a) (CADR a)) (MAX (CAR b) (CADR b)))))
+)
+
+(DEFUN DELTASUM (a b)
+	(RETURN-FROM DELTASUM (ABS (- (+ (CAR a) (CADR a)) (+ (CAR b) (CADR b)))))
+)
