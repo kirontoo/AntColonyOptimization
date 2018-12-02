@@ -36,3 +36,27 @@
 
 (printGrid testGrid)
 
+(SETF gridStr "----
+xxxx
+")
+
+(DEFUN GRID-TO-LIST (str)
+	(SETF row ())
+	(SETF grid ())
+
+	(LOOP for c across str
+		IF (eq c #\newline)
+		DO ( progn
+			(SETF grid (APPEND grid (LIST row)))
+			(SETF row ())		;; clear row
+		)
+		ELSE DO (SETF row (APPEND row (LIST (LIST (STRING c) (FLOAT 0)))))
+	)
+
+	(PRINC row)
+	(PRINT grid)
+
+	(RETURN-FROM GRID-TO-LIST grid)
+)
+
+(GRID-TO-LIST gridStr)
