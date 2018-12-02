@@ -1,3 +1,6 @@
+;; constants
+(defconstant SK 0.1) ;; for heuristic function
+
 (DEFUN initAntColony (size)       ;creat colony with given size
     (SETQ antList ())
     (LOOP for count from 0 to size                              ;colony is (LIST ant ant ant)
@@ -36,8 +39,8 @@
 
 (printGrid testGrid)
 
-(SETF gridStr "----
-xxxx
+(SETF gridStr "-x-w-g
+xyzt
 ")
 
 (DEFUN GRID-TO-LIST (str)
@@ -59,12 +62,33 @@ xxxx
 	(RETURN-FROM GRID-TO-LIST grid)
 )
 
-(GRID-TO-LIST gridStr)
+(SETF grid-list (GRID-TO-LIST gridStr))
 
-(DEFUN DELTAMAX (a b) ;; each param is a coordinate (x y)
-	(RETURN-FROM DELTAMAX (ABS (- (MAX (CAR a) (CADR a)) (MAX (CAR b) (CADR b)))))
+(DEFUN deltaMax (a b) ;; each param is a coordinate (x y)
+	(RETURN-FROM deltaMax (ABS (- (MAX (CAR a) (CADR a)) (MAX (CAR b) (CADR b)))))
 )
 
-(DEFUN DELTASUM (a b)
-	(RETURN-FROM DELTASUM (ABS (- (+ (CAR a) (CADR a)) (+ (CAR b) (CADR b)))))
+(DEFUN deltaSum (a b)
+	(RETURN-FROM deltaSum (ABS (- (+ (CAR a) (CADR a)) (+ (CAR b) (CADR b)))))
+)
+
+(DEFUN getCell (x y grid) 
+	(RETURN-FROM getCell (NTH y (NTH x grid)))
+)
+
+;; gets the scent
+(PRINT (CADR (getCell 1 2 grid-list)))
+
+(SETF mode "forage") ;; temp ant mode
+
+;; cur = current cell, nbr = neighboring cell
+(DEFUN getHeuristicVal (cur nbr)
+	(SETF *random-state* (make-random-state t))
+	(SETF MC 0)
+	(IF (= mode "forage")
+		(SETF MC (deltaMax cur nbr))
+		(SETF MC (deltaSum cur nbr))
+	)
+
+	(RETURN-FROM getHeuristicVal (+ MC (* SK (CADR cur)) (/ (- (RANDOM 161) 80) 100.0)))
 )
