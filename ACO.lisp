@@ -5,7 +5,7 @@
     (SETQ antList ())
     (LOOP for count from 0 to size                              ;colony is (LIST ant ant ant)
         do
-        (SETQ antList (APPEND antList (LIST (LIST 0 0 nil))))   ;ants are (LIST x y return)
+        (SETQ antList (APPEND antList (LIST (LIST (LIST 0 0) nil (LIST ())))))   ;ants are (LIST (LIST x y return) (LIST path))
     )
     (RETURN-FROM initAntColony antList)
 )
