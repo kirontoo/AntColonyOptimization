@@ -82,13 +82,17 @@ xyzt
 (SETF mode "forage") ;; temp ant mode
 
 ;; cur = current cell, nbr = neighboring cell
-(DEFUN getHeuristicVal (cur nbr)
+(DEFUN getHeuristicVal (cur nbr) ;; (x y) coordinates
 	(SETF *random-state* (make-random-state t))
 	(SETF MC 0)
-	(IF (= mode "forage")
+	(SETF cell (getCell (CAR cur) (CADR cur) grid-list))
+
+	(IF (string= mode "forage")
 		(SETF MC (deltaMax cur nbr))
 		(SETF MC (deltaSum cur nbr))
 	)
 
-	(RETURN-FROM getHeuristicVal (+ MC (* SK (CADR cur)) (/ (- (RANDOM 161) 80) 100.0)))
+	(RETURN-FROM getHeuristicVal (+ MC (* SK (CADR cell)) (/ (- (RANDOM 161) 80) 100.0)))
 )
+
+(PRINT (getHeuristicVal (LIST 1 2) (LIST 1 1)))
