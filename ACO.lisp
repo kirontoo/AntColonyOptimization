@@ -89,6 +89,7 @@ xyzt
 	(IF (OR (MINUSP x) (MINUSP y)) (RETURN-FROM getCell nil))
 	(RETURN-FROM getCell (NTH y (NTH x grid)))
 )
+
 ;; @param l: list
 ;; @param n: index position
 ;; @param elem: list to insert
@@ -149,4 +150,11 @@ xyzt
 	(SETF nr (INSERT-N (REMOVE (getCell (CAR pos) (CADR pos) g) (NTH (CAR pos) g)) (CADR pos) rCell)) ;; insert rCell into the row
 	(SETF ng (REMOVE (NTH (CAR pos) g) g)) ;; remove old row
 	(RETURN-FROM replaceCell (INSERT-N ng (CAR pos) nr))
+)
+
+;; @param pos: coordinates of cell
+;; @param val: val to deposit
+;; @param g: grid
+(DEFUN  depositScent (pos val g) 
+	(RETURN-FROM depositScent (LIST (CAR (getCell (CAR pos) (CADR pos) g)) (FLOAT (+ (CADR (getCell (CAR pos) (CADR pos) g)) val))))
 )
