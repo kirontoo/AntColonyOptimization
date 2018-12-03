@@ -44,6 +44,8 @@
 xyzt
 ")
 
+;; @param str: grid in string form
+;; @return: a list ( () () ... )
 (DEFUN GRID-TO-LIST (str)
 	(SETF row ())
 	(SETF grid ())
@@ -65,14 +67,24 @@ xyzt
 
 (SETF grid-list (GRID-TO-LIST gridStr))
 
-(DEFUN deltaMax (a b) ;; each param is a coordinate (x y)
+;; @param a: coordinates (x y)
+;; @param b: coordinates (x y)
+;; @return: difference of max of coordinates
+(DEFUN deltaMax (a b)
 	(RETURN-FROM deltaMax (ABS (- (MAX (CAR a) (CADR a)) (MAX (CAR b) (CADR b)))))
 )
 
+
+;; @param a: coordinates (x y)
+;; @param b: coordinates (x y)
+;; @return: difference of sum of coordinates
 (DEFUN deltaSum (a b)
 	(RETURN-FROM deltaSum (ABS (- (+ (CAR a) (CADR a)) (+ (CAR b) (CADR b)))))
 )
 
+;; @param x: number
+;; @param y: number
+;; @return: a cell - (string float)
 (DEFUN getCell (x y grid) 
 	(RETURN-FROM getCell (NTH y (NTH x grid)))
 )
@@ -80,8 +92,11 @@ xyzt
 ;; gets the scent
 (PRINT (CADR (getCell 1 2 grid-list)))
 
-;; cur = current cell, nbr = neighboring cell
-(DEFUN getHeuristicVal (cur nbr mode) ;; (x y) coordinates
+;; @param cur: current cell coordinates (x y)
+;; @param nbr: neighboring cell coordinates (x y)
+;; @param mode: t or nil
+;; @return: float - heuristice value
+(DEFUN getHeuristicVal (cur nbr mode)
 	(SETF *random-state* (make-random-state t))
 	(SETF MC 0)
 	(SETF cell (getCell (CAR cur) (CADR cur) grid-list))
@@ -96,3 +111,12 @@ xyzt
 
 (PRINT (getHeuristicVal (LIST 1 2) (LIST 1 1) t))
 (PRINT (getHeuristicVal (LIST 1 2) (LIST 1 1) nil))
+
+;; @param: a cell from the grid
+;; @return: float - scent reduction value
+(DEFUN getSR (cell) 
+	(IF (> 1 (CADR cell))
+		(RETURN-FROM SR (FLOAT 0))
+		(RETURN-FROM SR (* (CADR cell) E))
+    )
+)
