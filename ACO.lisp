@@ -147,9 +147,19 @@ xyzt
 ;; @param g: grid
 ;; @return: new grid
 (DEFUN replaceCell (pos rCell g) 
-	(SETF nr (INSERT-N (REMOVE (getCell (CAR pos) (CADR pos) g) (NTH (CAR pos) g)) (CADR pos) rCell)) ;; insert rCell into the row
+	 ;; insert rCell into the row
+	(IF (= (CADR pos) (- (LIST-LENGTH (NTH (CAR pos) g)) 1))
+		(SETF nr (APPEND (REMOVE (getCell (CAR pos) (CADR pos) g) (NTH (CAR pos) g)) rCell))
+		(SETF nr (INSERT-N (REMOVE (getCell (CAR pos) (CADR pos) g) (NTH (CAR pos) g)) (CADR pos) rCell))
+	)
+
 	(SETF ng (REMOVE (NTH (CAR pos) g) g)) ;; remove old row
-	(RETURN-FROM replaceCell (INSERT-N ng (CAR pos) nr))
+
+	;; insert row into grid
+	(IF (= (CAR pos) (LIST-LENGTH ng))
+		(RETURN-FROM replaceCell (APPEND ng (LIST nr)))
+		(RETURN-FROM replaceCell (INSERT-N ng (CAR pos) nr))
+	)
 )
 
 ;; @param pos: coordinates of cell
