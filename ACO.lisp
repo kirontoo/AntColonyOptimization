@@ -134,7 +134,7 @@ xyzt
 ;; @param g: grid
 ;; @return: new grid
 (DEFUN replaceCell (pos rCell g) 
-	(SETF nr (INSERT-N (REMOVE cell (NTH (CAR pos) g)) (CADR pos) rCell)) ;; insert rCell into the row
+	(SETF nr (INSERT-N (REMOVE (getCell (CAR pos) (CADR pos) g) (NTH (CAR pos) g)) (CADR pos) rCell)) ;; insert rCell into the row
 	(SETF ng (REMOVE (NTH (CAR pos) g) g)) ;; remove old row
 	(RETURN-FROM replaceCell (INSERT-N ng (CAR pos) nr))
 )
