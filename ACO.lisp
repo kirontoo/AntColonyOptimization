@@ -168,3 +168,44 @@ xyzt
 (DEFUN  depositScent (pos val g) 
 	(RETURN-FROM depositScent (LIST (CAR (getCell (CAR pos) (CADR pos) g)) (FLOAT (+ (CADR (getCell (CAR pos) (CADR pos) g)) val))))
 )
+
+;; @param pos: coordinate of current cell
+;; @param srVal: scent reduction value
+;; @param gr: grid
+(DEFUN depositToArea (pos srVal gr)
+	(SETF depositVal (FLOAT (/ srVal 5)))
+
+	;; deposit to cell above (x y-1)
+	(IF (getCell (- (CAR pos) 1) (CADR pos) gr)
+		(progn
+			(SETF cell( depositScent (LIST (- (CAR pos) 1) (CADR pos) g) depositVal gr))
+			(SETF gr (replaceCell (LIST (- (CAR pos) 1) (CADR pos)) cell gr))
+		)
+	)
+
+	;; deposit to cell below
+	(IF (getCell (+ (CAR pos) 1) (CADR pos) gr)
+		(progn
+			(SETF cell( depositScent (LIST (+ (CAR pos) 1) (CADR pos) g) depositVal gr))
+			(SETF gr (replaceCell (LIST (+ (CAR pos) 1) (CADR pos)) cell gr))
+		)
+	)
+
+	;; deposit to cell on left
+	(IF (getCell (CAR pos) (- (CADR pos) 1) gr)
+		(progn
+			(SETF cell( depositScent (LIST (CAR pos) (- (CADR pos) 1) g) depositVal gr))
+			(SETF gr (replaceCell (LIST (CAR pos) (- (CADR pos) 1)) cell gr))
+		)
+	)
+
+	;;deposit to cell on right
+	(IF (getCell (CAR pos) (+ (CADR pos) 1) gr)
+		(progn
+			(SETF cell( depositScent (LIST (CAR pos) (+ (CADR pos) 1) g) depositVal gr))
+			(SETF gr (replaceCell (LIST (CAR pos) (+ (CADR pos) 1)) cell gr))
+		)
+	)
+
+	(RETURN-FROM depositToArea gr)
+)
