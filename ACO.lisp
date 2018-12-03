@@ -121,6 +121,14 @@ xyzt
     )
 )
 
+;; @param srVal: float - scent reduction value
+;; @param cell: list (string float)
+;; @return: a cell with the new scent value
+(DEFUN weakenScent (cell srVal) 
+	(SETF newScent (- (CADR cell) srVal))
+	(RETURN-FROM weakenScent (LIST (CAR cell) (FLOAT newScent)))
+)
+
 ;; @param pos: coordinates of cell you want to replace (x y)
 ;; @param rCell: cell to replace with - list (string float)
 ;; @param g: grid
