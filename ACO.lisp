@@ -85,8 +85,20 @@ xyzt
 ;; @param x: number
 ;; @param y: number
 ;; @return: a cell - (string float)
-(DEFUN getCell (x y grid) 
+(DEFUN getCell (x y grid)
+	(IF (OR (MINUSP x) (MINUSP y)) (RETURN-FROM getCell nil))
 	(RETURN-FROM getCell (NTH y (NTH x grid)))
+)
+;; @param l: list
+;; @param n: index position
+;; @param elem: list to insert
+;; @return: list
+(DEFUN INSERT-N (l n elem)
+    (COND
+        ((NULL l) ())
+        ((= n 0) (CONS elem l))
+        (T (CONS (CAR l) (INSERT-N (CDR l) (- n 1) elem)))
+    )
 )
 
 ;; gets the scent
