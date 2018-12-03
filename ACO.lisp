@@ -1,5 +1,6 @@
 ;; constants
 (defconstant SK 0.1) ;; for heuristic function
+(defconstant E 0.1) ;; scent evaporation value for scent reduction
 
 (DEFUN initAntColony (size)       ;creat colony with given size
     (SETQ antList ())
@@ -79,15 +80,13 @@ xyzt
 ;; gets the scent
 (PRINT (CADR (getCell 1 2 grid-list)))
 
-(SETF mode "forage") ;; temp ant mode
-
 ;; cur = current cell, nbr = neighboring cell
-(DEFUN getHeuristicVal (cur nbr) ;; (x y) coordinates
+(DEFUN getHeuristicVal (cur nbr mode) ;; (x y) coordinates
 	(SETF *random-state* (make-random-state t))
 	(SETF MC 0)
 	(SETF cell (getCell (CAR cur) (CADR cur) grid-list))
 
-	(IF (string= mode "forage")
+	(IF mode
 		(SETF MC (deltaMax cur nbr))
 		(SETF MC (deltaSum cur nbr))
 	)
@@ -95,4 +94,5 @@ xyzt
 	(RETURN-FROM getHeuristicVal (+ MC (* SK (CADR cell)) (/ (- (RANDOM 161) 80) 100.0)))
 )
 
-(PRINT (getHeuristicVal (LIST 1 2) (LIST 1 1)))
+(PRINT (getHeuristicVal (LIST 1 2) (LIST 1 1) t))
+(PRINT (getHeuristicVal (LIST 1 2) (LIST 1 1) nil))
