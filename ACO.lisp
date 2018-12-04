@@ -209,3 +209,16 @@ xyzt
 
 	(RETURN-FROM depositToArea gr)
 )
+
+;; @param ant: current ant
+;; @param newAnt: ant with new mode (return)
+;; @param list: antList
+(DEFUN updateAntList (ant newAnt list) 
+    (SETF list (REMOVE ant list :count 1) )
+    (RETURN-FROM updateAntList (APPEND list newAnt))
+)
+
+;; set ant to return mode
+(DEFUN flipAntMode (ant)
+    (LIST (CAR ant) nil (CDR ant)) ;; flip to return mode
+)
