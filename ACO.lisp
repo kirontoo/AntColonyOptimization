@@ -67,16 +67,16 @@ xyzt
 
 (SETF grid-list (GRID-TO-LIST gridStr))
 
-;; @param a: coordinates (x y)
-;; @param b: coordinates (x y)
+;; @param a: coordinates (y x)
+;; @param b: coordinates (y x)
 ;; @return: difference of max of coordinates
 (DEFUN deltaMax (a b)
 	(RETURN-FROM deltaMax (ABS (- (MAX (CAR a) (CADR a)) (MAX (CAR b) (CADR b)))))
 )
 
 
-;; @param a: coordinates (x y)
-;; @param b: coordinates (x y)
+;; @param a: coordinates (y x)
+;; @param b: coordinates (y x)
 ;; @return: difference of sum of coordinates
 (DEFUN deltaSum (a b)
 	(RETURN-FROM deltaSum (ABS (- (+ (CAR a) (CADR a)) (+ (CAR b) (CADR b)))))
@@ -105,8 +105,8 @@ xyzt
 ;; gets the scent
 (PRINT (CADR (getCell 1 2 grid-list)))
 
-;; @param cur: current cell coordinates (x y)
-;; @param nbr: neighboring cell coordinates (x y)
+;; @param cur: current cell coordinates (y x)
+;; @param nbr: neighboring cell coordinates (y x)
 ;; @param mode: t or nil
 ;; @return: float - heuristice value
 (DEFUN getHeuristicVal (cur nbr mode)
@@ -142,7 +142,7 @@ xyzt
 	(RETURN-FROM weakenScent (LIST (CAR cell) (FLOAT newScent)))
 )
 
-;; @param pos: coordinates of cell you want to replace (x y)
+;; @param pos: coordinates of cell you want to replace (y x)
 ;; @param rCell: cell to replace with - list (string float)
 ;; @param g: grid
 ;; @return: new grid
@@ -175,7 +175,7 @@ xyzt
 (DEFUN depositToArea (pos srVal gr)
 	(SETF depositVal (FLOAT (/ srVal 5)))
 
-	;; deposit to cell above (x y-1)
+	;; deposit to cell above (y x-1)
 	(IF (getCell (- (CAR pos) 1) (CADR pos) gr)
 		(progn
 			(SETF cell( depositScent (LIST (- (CAR pos) 1) (CADR pos) g) depositVal gr))
