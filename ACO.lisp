@@ -222,3 +222,56 @@ xyzt
 (DEFUN flipAntMode (ant)
     (LIST (CAR ant) nil (CDR ant)) ;; flip to return mode
 )
+
+(SETQ testAnt (LIST (LIST 5 5) t (LIST ())))
+(DEFUN moveAnt (ant)  ;(LIST (LIST x y) return (LIST path))         check l r u d
+    (IF (NTH 1 ant)         ;check mode, forage or return
+        (PROGN          ;forage
+            (SETQ possibleMoves ()) ;(heuristic x y)
+            (IF (AND (< 0 (NTH 0 (NTH 0 ant)))  ;check 0<x
+                                    ;  |               x - 1            |              y             |    path
+                    (NOT (MEMBER (LIST (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))) (NTH 2 ant) :test #'equal)));check if in tabu
+                
+                (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST   ;TODO this doesn't add if its in tabu. fix it so that it adds bad value if tabu
+                            (getHeuristicVal (NTH 0 ant) (LIST (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))) t)
+                            (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))))));add to possibleMoves (heuristic x y)
+            )
+            (IF (AND (> 39 (NTH 0 (NTH 0 ant)))  ;check x<39
+                    (NOT (MEMBER (LIST (+ (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))) (NTH 2 ant) :test #'equal)))
+                
+                (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST
+                            ;(getHeuristicVal (NTH 0 ant) (LIST (+ (NTH 0  (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))) (NTH 1 ant))
+                            (+ (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))))))
+            )
+            (IF (AND (< 0 (NTH 1 (NTH 0 ant)))  ;check 0<y
+                    (NOT (MEMBER (LIST (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1)) (NTH 2 ant) :test #'equal)))
+                
+                (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST
+                            ;(getHeuristicVal (NTH 0 ant) (LIST (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1)) (NTH 1 ant))
+                            (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1)))))
+            )
+            (IF (AND (> 59 (NTH 1 (NTH 0 ant)))  ;check y<59
+                    (NOT (MEMBER (LIST (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1)) (NTH 2 ant) :test #'equal)))
+                
+                (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST
+                            ;(getHeuristicVal (NTH 0 ant) (LIST (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1)) (NTH 1 ant))
+                            (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1)))))
+            )
+            (PRINT possibleMoves)
+            ;choose best heuristic         ;TODO figure out a way to check for walls. either in this func or heuristic func
+            ;   (l r u d) nil if wall, tiny value if tabu
+            ;   set new position to best
+            ;   append old position to !!!first or last in path, decide
+            (IF (AND (= 39 (NTH 0 (NTH 0 ant)))     ;ant reached goal, set return bit
+                    (= 59 (NTH 1 (NTH 0 ant))))
+                (SETF (NTH 1 ant) t)
+            )
+        )
+        ;(PROGN      ;return
+            ;go to previous cell
+            ;add scent
+        ;)
+    )
+)   
+
+(moveAnt testAnt)
