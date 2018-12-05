@@ -175,7 +175,7 @@ xyzt
 (DEFUN depositToArea (pos srVal gr)
 	(SETF depositVal (FLOAT (/ srVal 5)))
 
-	;; deposit to cell above (y x-1)
+	;; deposit to cell above (y-1 x)
 	(IF (getCell (- (CAR pos) 1) (CADR pos) gr)
 		(progn
 			(SETF cell( depositScent (LIST (- (CAR pos) 1) (CADR pos) g) depositVal gr))
