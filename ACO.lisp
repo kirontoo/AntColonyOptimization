@@ -85,9 +85,9 @@ xyzt
 ;; @param x: number
 ;; @param y: number
 ;; @return: a cell - (string float)
-(DEFUN getCell (x y grid)
-	(IF (OR (MINUSP x) (MINUSP y)) (RETURN-FROM getCell nil))
-	(RETURN-FROM getCell (NTH y (NTH x grid)))
+(DEFUN getCell (y x grid)
+	(IF (OR (MINUSP y) (MINUSP x)) (RETURN-FROM getCell nil))
+	(RETURN-FROM getCell (NTH x (NTH y grid)))
 )
 
 ;; @param l: list
