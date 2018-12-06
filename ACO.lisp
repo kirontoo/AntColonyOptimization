@@ -107,7 +107,7 @@ xyzt
 
 ;; @param cur: current cell coordinates (y x)
 ;; @param nbr: neighboring cell coordinates (y x)
-;; @param mode: t or nil
+;; @param mode: t for forage or nil for return mode
 ;; @return: float - heuristice value
 (DEFUN getHeuristicVal (cur nbr mode)
 	(SETF *random-state* (make-random-state t))
@@ -165,6 +165,7 @@ xyzt
 ;; @param pos: coordinates of cell
 ;; @param val: val to deposit
 ;; @param g: grid
+;; @return: cell with updated scent
 (DEFUN  depositScent (pos val g) 
 	(RETURN-FROM depositScent (LIST (CAR (getCell (CAR pos) (CADR pos) g)) (FLOAT (+ (CADR (getCell (CAR pos) (CADR pos) g)) val))))
 )
@@ -172,6 +173,7 @@ xyzt
 ;; @param pos: coordinate of current cell
 ;; @param srVal: scent reduction value
 ;; @param gr: grid
+;; @return: grid with updated scent
 (DEFUN depositToArea (pos srVal gr)
 	(SETF depositVal (FLOAT (/ srVal 5)))
 
@@ -213,6 +215,7 @@ xyzt
 ;; @param ant: current ant
 ;; @param newAnt: ant with new mode (return)
 ;; @param list: antList
+;; @return: list of ants with updated mode
 (DEFUN updateAntList (ant newAnt list) 
     (SETF list (REMOVE ant list :count 1) )
     (RETURN-FROM updateAntList (APPEND list newAnt))
