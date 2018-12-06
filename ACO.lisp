@@ -13,19 +13,11 @@
 (FORMAT t "ants(x y return):    ")
 (PRINC (initAntColony 5))
 
-(DEFUN printGrid (grid)
-    (FORMAT t "~%_________~%")
-    (LOOP for y from 0 to (- (LIST-LENGTH grid) 1)
-        do
-        (LOOP for x from 0 to (- (LIST-LENGTH (NTH y grid)) 1)
-            do
-            (IF (CAR (NTH x (NTH y grid)))
-                (FORMAT t "x")
-                (FORMAT t "-")
-            )
-        )
-        (FORMAT t "~%")
-    )
+(DEFUN printGrid (g)
+    (FORMAT t "~%-----GRID-----~%")
+    (LOOP for row from 0 to (- (LIST-LENGTH g) 1)
+        do (PRINT (NTH row g))
+     )
 )
 
 (SETQ testGrid (LIST    ;(y (x (wall scent) ) )
