@@ -218,55 +218,88 @@ xyzt
     (LIST (CAR ant) nil (CDR ant)) ;; flip to return mode
 )
 
-(SETQ testAnt (LIST (LIST 5 5) t (LIST ())))
-(DEFUN moveAnt (ant)  ;(LIST (LIST x y) return (LIST path))         check l r u d
+(DEFUN moveAnt (ant grid)  ;(LIST (LIST x y) return (LIST path))         check l r u d
     (IF (NTH 1 ant)         ;check mode, forage or return
         (PROGN          ;forage
-            (SETQ possibleMoves ()) ;(heuristic x y)
-            (IF (AND (< 0 (NTH 0 (NTH 0 ant)))  ;check 0<x
-                                    ;  |               x - 1            |              y             |    path
-                    (NOT (MEMBER (LIST (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))) (NTH 2 ant) :test #'equal)));check if in tabu
-                
-                (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST   ;TODO this doesn't add if its in tabu. fix it so that it adds bad value if tabu
-                            (getHeuristicVal (NTH 0 ant) (LIST (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))) t)
-                            (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))))));add to possibleMoves (heuristic x y)
-            )
-            (IF (AND (> 39 (NTH 0 (NTH 0 ant)))  ;check x<39
-                    (NOT (MEMBER (LIST (+ (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))) (NTH 2 ant) :test #'equal)))
-                
-                (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST
-                            ;(getHeuristicVal (NTH 0 ant) (LIST (+ (NTH 0  (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))) (NTH 1 ant))
-                            (+ (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))))))
-            )
-            (IF (AND (< 0 (NTH 1 (NTH 0 ant)))  ;check 0<y
+            (SETQ possibleMoves ()) ;(heuristic y x )        (getCell y x grid)
+            
+            (IF (AND (getCell (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1) grid)  ;check 0<x
+                    (NTH 0 (getCell (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1) grid))    ;check wall
                     (NOT (MEMBER (LIST (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1)) (NTH 2 ant) :test #'equal)))
                 
                 (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST
-                            ;(getHeuristicVal (NTH 0 ant) (LIST (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1)) (NTH 1 ant))
+                            (getHeuristicVal (NTH 0 ant) (LIST (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1)) (NTH 1 ant))
                             (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1)))))
             )
-            (IF (AND (> 59 (NTH 1 (NTH 0 ant)))  ;check y<59
+            (IF (AND (getCell (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1) grid)  ;check x<39
+                    (NTH 0 (getCell (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1) grid))
                     (NOT (MEMBER (LIST (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1)) (NTH 2 ant) :test #'equal)))
                 
                 (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST
-                            ;(getHeuristicVal (NTH 0 ant) (LIST (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1)) (NTH 1 ant))
+                            (getHeuristicVal (NTH 0 ant) (LIST (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1)) (NTH 1 ant))
                             (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1)))))
             )
-            (PRINT possibleMoves)
-            ;choose best heuristic         ;TODO figure out a way to check for walls. either in this func or heuristic func
-            ;   (l r u d) nil if wall, tiny value if tabu
-            ;   set new position to best
-            ;   append old position to !!!first or last in path, decide
-            (IF (AND (= 39 (NTH 0 (NTH 0 ant)))     ;ant reached goal, set return bit
-                    (= 59 (NTH 1 (NTH 0 ant))))
-                (SETF (NTH 1 ant) t)
+            (IF (AND (getCell (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant)) grid) ;check 0<y
+                    (NTH 0 (getCell (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant)) grid))
+                    (NOT (MEMBER (LIST (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))) (NTH 2 ant) :test #'equal)))
+                
+                (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST
+                            (getHeuristicVal (NTH 0 ant) (LIST (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))) t)
+                            (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))))))
             )
+            (IF (AND (getCell (+ (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant)) grid) ;check y<59
+                    (NTH 0 (getCell (+ (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant)) grid))
+                    (NOT (MEMBER (LIST (+ (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))) (NTH 2 ant) :test #'equal)))
+                
+                (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST
+                            (getHeuristicVal (NTH 0 ant) (LIST (+ (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))) (NTH 1 ant))
+                            (+ (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))))))
+            )
+            (SETQ bestMove ())
+            (SETQ chosenMove())
+            (IF (= (LIST-LENGTH possibleMoves) 0)       ;no possible moves, go back
+                (PROGN
+                    (SETQ chosenMove (LIST 0 (NTH 0 (NTH 1 (NTH 2 ant))) (NTH 1 (NTH 1 (NTH 2 ant)))))     ;set chosenMove to first of tabu
+                    (SETF (NTH 2 ant) (APPEND (LIST (LIST (NTH 0 (NTH 1 (NTH 2 ant))) (NTH 1 (NTH 1 (NTH 2 ant))))) (NTH 2 ant)))    ;append backtrack
+                )
+                (PROGN 
+                    (SETQ chosenMove (NTH 0 possibleMoves))     ;starts chosenMove at first of possibleMoves
+                    (LOOP for count from 0 to (- (LIST-LENGTH possibleMoves) 1) ;compare with rest of possibleMoves
+                        do                                                      ;set chosenMove to (highest heuristic y x)
+                        (IF (< (NTH 0 chosenMove) (NTH 0 (NTH count possibleMoves)))   
+                            (SETQ chosenMove (NTH count possibleMoves))
+                        )
+                    )
+                    (SETF (NTH 2 ant) (APPEND (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove))) (NTH 2 ant))) ;append old position to front of tabu
+                )   
+            )
+            (IF (AND (= 59 (NTH 0 (NTH 0 ant)))     ;ant reached goal, set return bit
+                    (= 39 (NTH 1 (NTH 0 ant))))
+                (SETF (NTH 1 ant) nil)
+            )
+            (RETURN-FROM moveAnt (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove)) (NTH 1 ant) (NTH 2 ant)))
         )
         ;(PROGN      ;return
             ;go to previous cell
             ;add scent
         ;)
     )
-)   
-
-(moveAnt testAnt)
+)       
+(SETQ testAnt (LIST (LIST 0 0) t (LIST (LIST 0 0))))
+(FORMAT t "~%move0: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move1: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move2: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move3: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move4: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move5: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move6: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move7: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move8: ~a" testAnt)
