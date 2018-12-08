@@ -21,12 +21,12 @@
 )
 
 (SETQ testGrid (LIST    ;(y (x (wall scent) ) )
-                (LIST ;(0,0)   (1,0)     (2,0)    (3,0)      (4,0)
-                    (LIST t (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST t (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST t (FLOAT 0)) )
+                (LIST ;(0,0)                    (1,0)        (2,0)                (3,0)           (4,0)
+                    (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) )
                 (LIST ;(1,0)   (1,1)     ...
-                    (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST t (FLOAT 0)) )
+                    (LIST t (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST nil (FLOAT 0)))
                 (LIST ;(2,0)   ...
-                    (LIST t (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST t (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST t (FLOAT 0)) )
+                    (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)))
                 )
 )   ;idk what is a good way to make a 40x60 maze without hardcoding
 
@@ -222,10 +222,9 @@ xyzt
     (IF (NTH 1 ant)         ;check mode, forage or return
         (PROGN          ;forage
             (SETQ possibleMoves ()) ;(heuristic y x )        (getCell y x grid)
-            
             (IF (AND (getCell (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1) grid)  ;check 0<x
                     (NTH 0 (getCell (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1) grid))    ;check wall
-                    (NOT (MEMBER (LIST (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1)) (NTH 2 ant) :test #'equal)))
+                    (NOT (MEMBER (LIST (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1)) (NTH 2 ant) :test #'equal)))  ;check if in tabu
                 
                 (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST
                             (getHeuristicVal (NTH 0 ant) (LIST (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1)) (NTH 1 ant))
@@ -234,7 +233,6 @@ xyzt
             (IF (AND (getCell (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1) grid)  ;check x<39
                     (NTH 0 (getCell (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1) grid))
                     (NOT (MEMBER (LIST (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1)) (NTH 2 ant) :test #'equal)))
-                
                 (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST
                             (getHeuristicVal (NTH 0 ant) (LIST (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1)) (NTH 1 ant))
                             (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1)))))
@@ -259,8 +257,25 @@ xyzt
             (SETQ chosenMove())
             (IF (= (LIST-LENGTH possibleMoves) 0)       ;no possible moves, go back
                 (PROGN
-                    (SETQ chosenMove (LIST 0 (NTH 0 (NTH 1 (NTH 2 ant))) (NTH 1 (NTH 1 (NTH 2 ant)))))     ;set chosenMove to first of tabu
-                    (SETF (NTH 2 ant) (APPEND (LIST (LIST (NTH 0 (NTH 1 (NTH 2 ant))) (NTH 1 (NTH 1 (NTH 2 ant))))) (NTH 2 ant)))    ;append backtrack
+                    (SETQ patternFound nil)                                         ;pattern match to allow ant to backtrack more than 1 cell
+                    (LOOP for count from 0 to (- (LIST-LENGTH (NTH 2 ant)) 1)       ;backtrack more than 1
+                        do
+                        (IF (AND (NOT patternFound) (equal (NTH 1 (NTH 2 ant)) (NTH count (NTH 2 ant)))  )   ;find [decisionCell] in path
+                            (IF (equal (NTH 0 (NTH 2 ant)) (NTH (+ count 1) (NTH 2 ant)))
+                                (PROGN
+                                    (SETQ patternFound t)                           ;found repeating pattern of 2 cells. Go to cell before the 2 cells
+                                    (SETQ chosenMove (LIST 0 (NTH 0 (NTH (+ count 2) (NTH 2 ant))) (NTH 1 (NTH (+ count 2) (NTH 2 ant))) ))
+                                    (SETF (NTH 2 ant) (APPEND (LIST (LIST (NTH 0 (NTH (+ count 2) (NTH 2 ant))) (NTH 1 (NTH (+ count 2) (NTH 2 ant))))) (NTH 2 ant)))
+                                )
+                            )
+                        )
+                    )
+                    (IF (NOT patternFound)  ;backtrack only 1
+                        (PROGN
+                            (SETQ chosenMove (LIST 0 (NTH 0 (NTH 1 (NTH 2 ant))) (NTH 1 (NTH 1 (NTH 2 ant)))))
+                            (SETF (NTH 2 ant) (APPEND (LIST (LIST (NTH 0 (NTH 1 (NTH 2 ant))) (NTH 1 (NTH 1 (NTH 2 ant))))) (NTH 2 ant)))
+                        )
+                    )
                 )
                 (PROGN 
                     (SETQ chosenMove (NTH 0 possibleMoves))     ;starts chosenMove at first of possibleMoves
@@ -303,3 +318,13 @@ xyzt
 (FORMAT t "~%move7: ~a" testAnt)
 (SETQ testAnt (moveAnt testAnt testGrid))
 (FORMAT t "~%move8: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move9: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move0: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move1: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move2: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move3: ~a" testAnt)
