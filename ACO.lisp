@@ -30,10 +30,46 @@
                 )
 )   ;idk what is a good way to make a 40x60 maze without hardcoding
 
-(printGrid testGrid)
-
-(SETF gridStr "-x-w-g
-xyzt
+(SETF gridStr "-----x-x--------x------x-----x-x-----x---------x---x----x---
+--x--x-xxx--x---x-xx-xxxx-xx-x-------x-----x---x------x-x---
+--x--x----x-x----------x-----x-xx-x-xx-----x---x---x--x-x---
+--x--x-x--x-x---x-xxx-xx-----x-x-----xxx-x---------x--------
+--x--x-x--x-x---x------xxxx--x-------------x-------x--x-x---
+--x--x-x----x---x---x--x-------x-x-xx---x--xxxx--xxx--x-x---
+--x----x--------x------xxxx----x-----x--x--x-------x--x-x---
+-----x--xx--x---x---x--x-----x-xxx--xx-----xx-x-xxx-xx--x---
+xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
+-------x----x---x---x--x-----x-x-----x--x--x-------x----x---
+-----x-xxx--x---xxx-xx-x-xxx-xxxxxxxx-xxxxxxxxxx-xxxxx--x---
+-----x-x----x---x------------x---------------------x----x---
+xx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-x
+-------x---x----x------x----------x--x-----x--x-------------
+--x----x---x----x------x----------x--x------------------x---
+--xx--xx--------xx--xxxxx-xxxx-x--------x--x--x-xxx-x-------
+--x--------xxx----x----x-------x--------x-----------x---x---
+--x--------x----x-x-----xxxxxxxx-xxxxxxxxxxxxxxxxxxx-xxxxxxx
+----x-xxxxxx--x---x----x--x-----x-------x-------------------
+--x-----------x-x---x-xx--------xxxx--xxx-------------------
+--x--------x--x-x-x----x--x-xxx------x--xxxxxxxxx-xxxxx-xxxx
+--x--------x----x------x--x----------x----------------------
+xxxxxxxx-xxxxxxxxxxxxx-x--x-----x-x-----x-------------------
+---x----------x--x-----x--x-----x-x--x---xxxx--xx-xx-xxxxxxx
+-----x-x--x-x-x--x-----x--xx--xxx-xx----x-------x--x---x----
+-----x-------------x---x--x-----x----x--x-----x-x--------x--
+---x---x--x-x------x---x--x-----xx--xx--x---x-x-x--x--------
+xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
+---x--x--------------x-xxxx-xxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxx
+------x--------------x----x--x----x----------x-x--x---x-----
+---x--xxxx-xxxx-xxxxx--x--x-------xxxxx-xx-----x--x---xx-x-x
+---x--x----x-----x---x-x--x--x-------------x------x---x--x--
+---x--xx-x-xx-xx-x-----x--x--xx--x-------x-x-x-x--x---x--x--
+---x--x--------------x-x--x--x--x-xxxx-x-x-x-x-x------x--x--
+---x--x--------------x-x-----x----x------x-x-x-x--x---x-----
+---x----xxxxxx-xxxxxxx-x--x-------x------x-x-x-x--x---x--x--
+---x--x--------------x-x--x--x--x-x--------x-x-x------------
+------x---x--x---x---x-x---xxxx-xxxxxxxxxxx-xx----x---x--x--
+---x--x--x----x--x---x-x--x------------------x-x--x---x--x--
+---x-----x----x------x-x--x------------------x-x--x------x--
 ")
 
 ;; @param str: grid in string form
@@ -50,9 +86,6 @@ xyzt
 		)
 		ELSE DO (SETF row (APPEND row (LIST (LIST (STRING c) (FLOAT 0)))))
 	)
-
-	(PRINC row)
-	(PRINT grid)
 
 	(RETURN-FROM GRID-TO-LIST grid)
 )
@@ -94,9 +127,6 @@ xyzt
     )
 )
 
-;; gets the scent
-(PRINT (CADR (getCell 1 2 grid-list)))
-
 ;; @param cur: current cell coordinates (y x)
 ;; @param nbr: neighboring cell coordinates (y x)
 ;; @param mode: t for forage or nil for return mode
@@ -113,9 +143,6 @@ xyzt
 
 	(RETURN-FROM getHeuristicVal (+ MC (* SK (CADR cell)) (/ (- (RANDOM 161) 80) 100.0)))
 )
-
-(PRINT (getHeuristicVal (LIST 1 2) (LIST 1 1) t))
-(PRINT (getHeuristicVal (LIST 1 2) (LIST 1 1) nil))
 
 ;; @param: a cell from the grid
 ;; @return: float - scent reduction value
