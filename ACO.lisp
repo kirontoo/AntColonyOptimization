@@ -4,7 +4,7 @@
 (defconstant D 10) ;; amount of scent to deposit
 
 (DEFUN initAnt ()
-    (RETURN-FROM initAnt (LIST (LIST (LIST 0 0) nil (LIST (0 0)) (LIST ()))))
+    (RETURN-FROM initAnt (LIST (LIST (LIST 0 0) nil (LIST (LIST 0 0)) (LIST ()))))
 )
 
 (DEFUN printGrid (g)
