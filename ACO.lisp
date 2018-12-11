@@ -3,19 +3,8 @@
 (defconstant E 0.1) ;; scent evaporation value for scent reduction
 (defconstant D 10) ;; amount of scent to deposit
 
-(DEFUN initAntColony (size)       ;creat colony with given size
-    (SETQ antList ())
-    (LOOP for count from 0 to size                              ;colony is (LIST ant ant ant)
-        do
-        (SETQ antList (APPEND antList (LIST (LIST (LIST 0 0) nil (LIST ())))))   ;ants are (LIST (LIST x y return) (LIST path))
-    )
-    (RETURN-FROM initAntColony antList)
-)
-(FORMAT t "ants(x y return):    ")
-(PRINC (initAntColony 5))
-
 (DEFUN initAnt ()
-    (RETURN-FROM initAnt (LIST (LIST (LIST 0 0) nil (LIST ()))))
+    (RETURN-FROM initAnt (LIST (LIST (LIST 0 0) nil (LIST (0 0)) (LIST ()))))
 )
 
 (DEFUN printGrid (g)
@@ -335,12 +324,12 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
                             )
                         )
                     )
-		    (RETURN-FROM moveAnt (LIST (NTH leastRecentCount (NTH 2 ant)) (NTH 1 ant) (NTHCDR leastRecentCount (NTH 2 ant)) (APPEND (LIST (NTH leastRecentCount (NTH 2 ant))) (NTH 3 ant))))
+		            (RETURN-FROM moveAnt (LIST (NTH leastRecentCount (NTH 2 ant)) (NTH 1 ant) (NTHCDR leastRecentCount (NTH 2 ant)) (APPEND (LIST (NTH leastRecentCount (NTH 2 ant))) (NTH 3 ant))))
                     
                     ;for testing purposes, does not include best path (nth 3 ant)
                     ;(RETURN-FROM moveAnt (LIST (NTH leastRecentCount (NTH 2 ant)) (NTH 1 ant) (NTHCDR leastRecentCount (NTH 2 ant))))
                 )
-                (RETURN-FROM moveAnt testAnt)   ;made it back, do nothing
+                (RETURN-FROM moveAnt ant)   ;made it back, do nothing
             )
         )
     )
@@ -355,7 +344,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 
 ( LOOP WHILE ( /= goalCount 1)
     do
-    (LOOP for n in 0 to (- (LIST-LENGTH antColony) 1)
+    (LOOP for n from 0 to (- (LIST-LENGTH antColony) 1)
         do
         ;; returning ants deposit scent to current position
         (IF (not (CADR (NTH n antColony)))
@@ -368,7 +357,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
     )
 
     ;; For each grid cell
-    (LOOP for y in 0 to (- (LIST-LENGTH grid) 1)
+    (LOOP for y from 0 to (- (LIST-LENGTH grid) 1)
         do
         (LOOP for x in 0 to (- (LIST-LENGTH (NTH y grid)) 1)
             do
