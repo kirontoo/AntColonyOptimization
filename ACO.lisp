@@ -403,8 +403,11 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
     )
 
     ;; place new ant on starting cell
-    (SETF antColony (APPEND antColony (initAnt)))
+    ;;continue to place a new ant until 50 ants are on the grid
+    (IF (> 50 (LIST-LENGTH antList))
+    	(SETF antColony (APPEND antColony (initAnt)))
+    )
     ;; if on goal cell, start return journey, lay down scent for other ants
     ;;      and update best short path found
-       ;;comment
+      
 )
