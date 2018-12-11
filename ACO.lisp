@@ -406,4 +406,5 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
     (SETF antColony (APPEND antColony (initAnt)))
     ;; if on goal cell, start return journey, lay down scent for other ants
     ;;      and update best short path found
+       ;;comment
 )
