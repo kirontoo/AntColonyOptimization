@@ -322,11 +322,21 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
             (RETURN-FROM moveAnt (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove)) (NTH 1 ant) (NTH 2 ant)))
         )
         (PROGN      ;return
-            (IF (> (LIST-LENGTH (NTH 2 ant)) 0) ;not back yet
+            (IF (> (LIST-LENGTH (NTH 2 ant)) 1) ;not back yet
                 (PROGN
                     ;add scent
                     ;to forget dead ends, look for greatest nth occurence of cell, jump there
-                    (RETURN-FROM moveAnt (LIST (LIST (NTH 0 (NTH 1 (NTH 2 ant))) (NTH 1 (NTH 1 (NTH 2 ant)))) (NTH 1 ant) (CDR (NTH 2 ant))))
+                    (SETQ nextMove ())
+                    (SETQ leastRecentCount ())
+                    (LOOP for count from 0 to (LIST-LENGTH (NTH 2 ant))
+                        do
+                        (IF (equal (NTH 1 (NTH 2 ant)) (NTH count (NTH 2 ant)))
+                            (PROGN
+                                (SETQ leastRecentCount count)
+                            )
+                        )
+                    )
+                    (RETURN-FROM moveAnt (LIST (NTH leastRecentCount (NTH 2 ant)) (NTH 1 ant) (NTHCDR leastRecentCount (NTH 2 ant))))
                 )
                 (RETURN-FROM moveAnt testAnt)   ;made it back, do nothing
             )
