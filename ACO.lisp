@@ -335,7 +335,10 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
                             )
                         )
                     )
-                    (RETURN-FROM moveAnt (LIST (NTH leastRecentCount (NTH 2 ant)) (NTH 1 ant) (NTHCDR leastRecentCount (NTH 2 ant))))
+		    (RETURN-FROM moveAnt (LIST (NTH leastRecentCount (NTH 2 ant)) (NTH 1 ant) (NTHCDR leastRecentCount (NTH 2 ant)) (APPEND (LIST (NTH leastRecentCount (NTH 2 ant))) (NTH 3 ant))))
+                    
+                    ;for testing purposes, does not include best path (nth 3 ant)
+                    ;(RETURN-FROM moveAnt (LIST (NTH leastRecentCount (NTH 2 ant)) (NTH 1 ant) (NTHCDR leastRecentCount (NTH 2 ant))))
                 )
                 (RETURN-FROM moveAnt testAnt)   ;made it back, do nothing
             )
