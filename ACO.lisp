@@ -238,7 +238,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
         (PROGN          ;forage
             (IF (AND (= 39 (NTH 0 (NTH 0 ant)))     ;ant reached goal, set return bit
                     (= 59 (NTH 1 (NTH 0 ant))))
-                (RETURN-FROM moveAnt (LIST (NTH 0 ant) nil (NTH 2 ant)))
+                (RETURN-FROM moveAnt (LIST (NTH 0 ant) nil (NTH 2 ant) (LIST (LIST 39 59))))
             )
             (SETQ possibleMoves ()) ;(heuristic y x )        (getCell y x grid)
             (IF (AND (getCell (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1) grid)  ;check 0<x
