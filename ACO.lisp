@@ -236,8 +236,12 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 ;; @param list: antList
 ;; @return: list of ants with updated mode
 (DEFUN updateAntList (ant newAnt list) 
-    (SETF list (REMOVE ant list :count 1) )
-    (RETURN-FROM updateAntList (APPEND list newAnt))
+	(SETF n (POSITION ant list))
+	(SETF list (REMOVE ant list :count 1) )
+	(IF (= n (LIST-LENGTH list))
+		(RETURN-FROM updateAntList (APPEND list newAnt))
+		(RETURN-FROM updateAntList (INSERT-N list n newAnt))
+	)
 )
 
 ;; set ant to return mode
