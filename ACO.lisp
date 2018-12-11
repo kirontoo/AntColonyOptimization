@@ -25,16 +25,6 @@
      )
 )
 
-(SETQ testGrid (LIST    ;(y (x (wall scent) ) )
-                (LIST ;(0,0)                    (1,0)        (2,0)                (3,0)           (4,0)
-                    (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) )
-                (LIST ;(1,0)   (1,1)     ...
-                    (LIST t (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST nil (FLOAT 0)) (LIST nil (FLOAT 0)))
-                (LIST ;(2,0)   ...
-                    (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)) (LIST t (FLOAT 0)))
-                )
-)   ;idk what is a good way to make a 40x60 maze without hardcoding
-
 (SETF gridStr "-----x-x--------x------x-----x-x-----x---------x---x----x---
 --x--x-xxx--x---x-xx-xxxx-xx-x-------x-----x---x------x-x---
 --x--x----x-x----------x-----x-xx-x-xx-----x---x---x--x-x---
@@ -352,19 +342,6 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
         )
     )
 )
-;; (SETQ testAnt (LIST (LIST 0 0) t (LIST (LIST 0 0))))
-;; (SETQ continue t)
-;; (SETF count 0)
-;; (LOOP WHILE continue
-;;     do
-;;     (FORMAT t "~%move~a: ~a ~a" count (NTH 0 testAnt) (NTH 1 testAnt))
-;;     (SETQ testAnt (moveAnt testAnt grid-list))
-;;     (SETF count (+ count 1))
-;;     (IF (AND (equal (NTH 0 testAnt) (LIST 0 0)) (NOT (NTH 1 testAnt)))
-;;         (SETQ continue nil)
-;;     )
-;; )
-;; (PRINT testAnt)
 
 ;; ============MAIN LOOP===============
 (SETF goalCount 0)
@@ -404,10 +381,9 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 
     ;; place new ant on starting cell
     ;;continue to place a new ant until 50 ants are on the grid
-    (IF (> 50 (LIST-LENGTH antList))
+    (IF (>= 50 (LIST-LENGTH antList))
     	(SETF antColony (APPEND antColony (initAnt)))
     )
-    ;; if on goal cell, start return journey, lay down scent for other ants
+    ;; if on goal cell, start return journey
     ;;      and update best short path found
-      
 )
