@@ -236,8 +236,12 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 ;; @param list: antList
 ;; @return: list of ants with updated mode
 (DEFUN updateAntList (ant newAnt list) 
-    (SETF list (REMOVE ant list :count 1) )
-    (RETURN-FROM updateAntList (APPEND list newAnt))
+	(SETF n (POSITION ant list))
+	(SETF list (REMOVE ant list :count 1) )
+	(IF (= n (LIST-LENGTH list))
+		(RETURN-FROM updateAntList (APPEND list newAnt))
+		(RETURN-FROM updateAntList (INSERT-N list n newAnt))
+	)
 )
 
 ;; set ant to return mode
@@ -248,13 +252,9 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 (DEFUN moveAnt (ant grid)  ;(LIST (LIST x y) return (LIST path))         check l r u d
     (IF (NTH 1 ant)         ;check mode, forage or return
         (PROGN          ;forage
-            (IF (AND (= 39 (NTH 0 (NTH 0 ant)))     ;ant reached goal, set return bit
-                    (= 59 (NTH 1 (NTH 0 ant))))
-                (RETURN-FROM moveAnt (LIST (NTH 0 ant) nil (NTH 2 ant)))
-            )
             (SETQ possibleMoves ()) ;(heuristic y x )        (getCell y x grid)
             (IF (AND (getCell (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1) grid)  ;check 0<x
-                    (STRING= "-" (NTH 0 (getCell (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1) grid)))    ;check wall
+                    (NTH 0 (getCell (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1) grid))    ;check wall
                     (NOT (MEMBER (LIST (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1)) (NTH 2 ant) :test #'equal)))  ;check if in tabu
                 
                 (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST
@@ -262,14 +262,14 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
                             (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1)))))
             )
             (IF (AND (getCell (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1) grid)  ;check x<39
-                    (STRING= "-" (NTH 0 (getCell (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1) grid)))
+                    (NTH 0 (getCell (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1) grid))
                     (NOT (MEMBER (LIST (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1)) (NTH 2 ant) :test #'equal)))
                 (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST
                             (getHeuristicVal (NTH 0 ant) (LIST (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1)) (NTH 1 ant))
                             (NTH 0 (NTH 0 ant)) (+ (NTH 1 (NTH 0 ant)) 1)))))
             )
             (IF (AND (getCell (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant)) grid) ;check 0<y
-                    (STRING= "-" (NTH 0 (getCell (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant)) grid)))
+                    (NTH 0 (getCell (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant)) grid))
                     (NOT (MEMBER (LIST (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))) (NTH 2 ant) :test #'equal)))
                 
                 (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST
@@ -277,7 +277,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
                             (- (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))))))
             )
             (IF (AND (getCell (+ (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant)) grid) ;check y<59
-                    (STRING= "-" (NTH 0 (getCell (+ (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant)) grid)))
+                    (NTH 0 (getCell (+ (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant)) grid))
                     (NOT (MEMBER (LIST (+ (NTH 0 (NTH 0 ant)) 1) (NTH 1 (NTH 0 ant))) (NTH 2 ant) :test #'equal)))
                 
                 (SETQ possibleMoves (APPEND possibleMoves (LIST (LIST
@@ -291,18 +291,18 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
                     (SETQ patternFound nil)                                         ;pattern match to allow ant to backtrack more than 1 cell
                     (LOOP for count from 0 to (- (LIST-LENGTH (NTH 2 ant)) 1)       ;backtrack more than 1
                         do
-                        (IF (equal (NTH 1 (NTH 2 ant)) (NTH count (NTH 2 ant)))     ;find [decisionCell] in path
-                            (IF (AND (equal (NTH 0 (NTH 2 ant)) (NTH (+ count 1) (NTH 2 ant))))
+                        (IF (AND (NOT patternFound) (equal (NTH 1 (NTH 2 ant)) (NTH count (NTH 2 ant)))  )   ;find [decisionCell] in path
+                            (IF (equal (NTH 0 (NTH 2 ant)) (NTH (+ count 1) (NTH 2 ant)))
                                 (PROGN
                                     (SETQ patternFound t)                           ;found repeating pattern of 2 cells. Go to cell before the 2 cells
                                     (SETQ chosenMove (LIST 0 (NTH 0 (NTH (+ count 2) (NTH 2 ant))) (NTH 1 (NTH (+ count 2) (NTH 2 ant))) ))
+                                    (SETF (NTH 2 ant) (APPEND (LIST (LIST (NTH 0 (NTH (+ count 2) (NTH 2 ant))) (NTH 1 (NTH (+ count 2) (NTH 2 ant))))) (NTH 2 ant)))
                                 )
                             )
                         )
                     )
-                    (IF patternFound  
-                        (SETF (NTH 2 ant) (APPEND (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove))) (NTH 2 ant)))
-                        (PROGN ;backtrack only 1
+                    (IF (NOT patternFound)  ;backtrack only 1
+                        (PROGN
                             (SETQ chosenMove (LIST 0 (NTH 0 (NTH 1 (NTH 2 ant))) (NTH 1 (NTH 1 (NTH 2 ant)))))
                             (SETF (NTH 2 ant) (APPEND (LIST (LIST (NTH 0 (NTH 1 (NTH 2 ant))) (NTH 1 (NTH 1 (NTH 2 ant))))) (NTH 2 ant)))
                         )
@@ -319,41 +319,43 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
                     (SETF (NTH 2 ant) (APPEND (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove))) (NTH 2 ant))) ;append old position to front of tabu
                 )   
             )
+            (IF (AND (= 59 (NTH 0 (NTH 0 ant)))     ;ant reached goal, set return bit
+                    (= 39 (NTH 1 (NTH 0 ant))))
+                (SETF (NTH 1 ant) nil)
+            )
             (RETURN-FROM moveAnt (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove)) (NTH 1 ant) (NTH 2 ant)))
         )
-        (PROGN      ;return
-            (IF (> (LIST-LENGTH (NTH 2 ant)) 1) ;not back yet
-                (PROGN
-                    ;add scent
-                    ;to forget dead ends, look for greatest nth occurence of cell, jump there
-                    (SETQ nextMove ())
-                    (SETQ leastRecentCount ())
-                    (LOOP for count from 0 to (LIST-LENGTH (NTH 2 ant))
-                        do
-                        (IF (equal (NTH 1 (NTH 2 ant)) (NTH count (NTH 2 ant)))
-                            (PROGN
-                                (SETQ leastRecentCount count)
-                            )
-                        )
-                    )
-                    (RETURN-FROM moveAnt (LIST (NTH leastRecentCount (NTH 2 ant)) (NTH 1 ant) (NTHCDR leastRecentCount (NTH 2 ant))))
-                )
-                (RETURN-FROM moveAnt testAnt)   ;made it back, do nothing
-            )
-        )
+        ;(PROGN      ;return
+            ;go to previous cell
+            ;add scent
+        ;)
     )
-)
+)       
 (SETQ testAnt (LIST (LIST 0 0) t (LIST (LIST 0 0))))
-(SETQ continue t)
-(SETF count 0)
-(LOOP WHILE continue
-    do
-    (FORMAT t "~%move~a: ~a ~a" count (NTH 0 testAnt) (NTH 1 testAnt))
-    (SETQ testAnt (moveAnt testAnt grid-list))
-    (SETF count (+ count 1))
-    (IF (AND (equal (NTH 0 testAnt) (LIST 0 0)) (NOT (NTH 1 testAnt)))
-        (SETQ continue nil)
-    )
-)
-(PRINT testAnt)
-
+(FORMAT t "~%move0: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move1: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move2: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move3: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move4: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move5: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move6: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move7: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move8: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move9: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move0: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move1: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move2: ~a" testAnt)
+(SETQ testAnt (moveAnt testAnt testGrid))
+(FORMAT t "~%move3: ~a" testAnt)
