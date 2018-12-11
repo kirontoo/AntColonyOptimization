@@ -1,6 +1,7 @@
 ;; constants
 (defconstant SK 0.1) ;; for heuristic function
 (defconstant E 0.1) ;; scent evaporation value for scent reduction
+(defconstant D 10) ;; amount of scent to deposit
 
 (DEFUN initAntColony (size)       ;creat colony with given size
     (SETQ antList ())
@@ -12,6 +13,10 @@
 )
 (FORMAT t "ants(x y return):    ")
 (PRINC (initAntColony 5))
+
+(DEFUN initAnt ()
+    (RETURN-FROM initAnt (LIST (LIST (LIST 0 0) nil (LIST ()))))
+)
 
 (DEFUN printGrid (g)
     (FORMAT t "~%-----GRID-----~%")
@@ -347,17 +352,58 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
         )
     )
 )
-(SETQ testAnt (LIST (LIST 0 0) t (LIST (LIST 0 0))))
-(SETQ continue t)
-(SETF count 0)
-(LOOP WHILE continue
-    do
-    (FORMAT t "~%move~a: ~a ~a" count (NTH 0 testAnt) (NTH 1 testAnt))
-    (SETQ testAnt (moveAnt testAnt grid-list))
-    (SETF count (+ count 1))
-    (IF (AND (equal (NTH 0 testAnt) (LIST 0 0)) (NOT (NTH 1 testAnt)))
-        (SETQ continue nil)
-    )
-)
-(PRINT testAnt)
+;; (SETQ testAnt (LIST (LIST 0 0) t (LIST (LIST 0 0))))
+;; (SETQ continue t)
+;; (SETF count 0)
+;; (LOOP WHILE continue
+;;     do
+;;     (FORMAT t "~%move~a: ~a ~a" count (NTH 0 testAnt) (NTH 1 testAnt))
+;;     (SETQ testAnt (moveAnt testAnt grid-list))
+;;     (SETF count (+ count 1))
+;;     (IF (AND (equal (NTH 0 testAnt) (LIST 0 0)) (NOT (NTH 1 testAnt)))
+;;         (SETQ continue nil)
+;;     )
+;; )
+;; (PRINT testAnt)
 
+;; ============MAIN LOOP===============
+(SETF goalCount 0)
+(SETF antColony (initAnt))
+(PRINT antColony)
+(SETF grid grid-list)
+(SETF bestPath ())
+
+( LOOP WHILE ( /= goalCount 1)
+    do
+    (LOOP for n in 0 to (- (LIST-LENGTH antColony) 1)
+        do
+        ;; returning ants deposit scent to current position
+        (IF (not (CADR (NTH n antColony)))
+            (SETF grid (depositScent (CAR (NTH n antColony)) D grid))
+        )
+        ;; ants move to target cell -> add to tabu list
+        (SETF movedAnt (moveAnt (NTH n antColony) grid))
+        (SETF antColony (updateAntList (NTH n antColony) movedAnt antColony))
+        ;;TODO: tabu list
+    )
+
+    ;; For each grid cell
+    (LOOP for y in 0 to (- (LIST-LENGTH grid) 1)
+        do
+        (LOOP for x in 0 to (- (LIST-LENGTH (NTH y grid)) 1)
+            do
+            (SETF cell (getCell y x grid))
+            ;; compute scent reduction to all grid cells
+            (SETF srVal (getSR cell))
+            ;; each grid cell subtract SR from Scent value
+            (SETF grid (replaceCell (LIST y x) (LIST (CAR cell) (FLOAT (- (CADR cell) srVal))) grid))
+            ;; deposit 1/5 of srval to adjacent cells
+            (SETF grid (depositToArea (LIST y x) srVal grid))
+        )
+    )
+
+    ;; place new ant on starting cell
+    (SETF antColony (APPEND antColony (initAnt)))
+    ;; if on goal cell, start return journey, lay down scent for other ants
+    ;;      and update best short path found
+)
