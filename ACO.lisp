@@ -238,7 +238,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
         (PROGN          ;forage
             (IF (AND (= 39 (NTH 0 (NTH 0 ant)))     ;ant reached goal, set return bit
                     (= 59 (NTH 1 (NTH 0 ant))))
-                (RETURN-FROM moveAnt (LIST (NTH 0 ant) nil (NTH 2 ant)))
+                (RETURN-FROM moveAnt (LIST (NTH 0 ant) nil (NTH 2 ant) (LIST (LIST 39 59))))
             )
             (SETQ possibleMoves ()) ;(heuristic y x )        (getCell y x grid)
             (IF (AND (getCell (NTH 0 (NTH 0 ant)) (- (NTH 1 (NTH 0 ant)) 1) grid)  ;check 0<x
@@ -354,6 +354,14 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
         (SETF movedAnt (moveAnt (NTH n antColony) grid))
         (SETF antColony (updateAntList (NTH n antColony) movedAnt antColony))
         ;;TODO: tabu list
+
+        ;; if on goal cell, start return journey
+        ;;      and update best short path found
+        (IF (= (CAR (NTH n antColony)) (LIST 39 59))
+            (IF (< (NTH 3 (NTH n antColony)) (LIST-LENGTH bestPath))
+                (SETF bestPath (NTH 3 (NTH n antColony)))
+            )
+        ) ;;TODO: change ant to return mode
     )
 
     ;; For each grid cell
@@ -376,6 +384,5 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
     (IF (>= 50 (LIST-LENGTH antList))
     	(SETF antColony (APPEND antColony (initAnt)))
     )
-    ;; if on goal cell, start return journey
-    ;;      and update best short path found
+    
 )
