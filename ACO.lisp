@@ -354,6 +354,14 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
         (SETF movedAnt (moveAnt (NTH n antColony) grid))
         (SETF antColony (updateAntList (NTH n antColony) movedAnt antColony))
         ;;TODO: tabu list
+
+        ;; if on goal cell, start return journey
+        ;;      and update best short path found
+        (IF (= (CAR (NTH n antColony)) (LIST 39 59))
+            (IF (< (NTH 3 (NTH n antColony)) (LIST-LENGTH bestPath))
+                (SETF bestPath (NTH 3 (NTH n antColony)))
+            )
+        ) ;;TODO: change ant to return mode
     )
 
     ;; For each grid cell
@@ -376,6 +384,5 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
     (IF (>= 50 (LIST-LENGTH antList))
     	(SETF antColony (APPEND antColony (initAnt)))
     )
-    ;; if on goal cell, start return journey
-    ;;      and update best short path found
+    
 )
