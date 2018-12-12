@@ -352,7 +352,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 
 ( LOOP WHILE ( /= goalCount 1)
     do
-    (LOOP for n in 0 to (- (LIST-LENGTH antColony) 1)
+    (LOOP for n from 0 to (- (LIST-LENGTH antColony) 1)
         do
         ;; returning ants deposit scent to current position
         (IF (not (CADR (NTH n antColony)))
@@ -373,9 +373,9 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
     )
 
     ;; For each grid cell
-    (LOOP for y in 0 to (- (LIST-LENGTH grid) 1)
+    (LOOP for y from 0 to (- (LIST-LENGTH grid) 1)
         do
-        (LOOP for x in 0 to (- (LIST-LENGTH (NTH y grid)) 1)
+        (LOOP for x from 0 to (- (LIST-LENGTH (NTH y grid)) 1)
             do
             (SETF cell (getCell y x grid))
             ;; compute scent reduction to all grid cells
