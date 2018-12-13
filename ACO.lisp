@@ -133,8 +133,8 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 ;; @return: float - scent reduction value
 (DEFUN getSR (cell) 
 	(IF (> 1 (CADR cell))
-		(RETURN-FROM SR (FLOAT 0))
-		(RETURN-FROM SR (* (CADR cell) E))
+		(RETURN-FROM getSR (FLOAT 0))
+		(RETURN-FROM getSR (* (CADR cell) E))
     )
 )
 
@@ -373,8 +373,8 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 
         ;; if on goal cell, start return journey
         ;;      and update best short path found
-        (IF (= (CAR (NTH n antColony)) (LIST 39 59))
-            (IF (< (NTH 3 (NTH n antColony)) (LIST-LENGTH bestPath))
+        (IF (equal (CAR (NTH n antColony)) (LIST 39 59))
+            (IF (< (LIST-LENGTH (NTH 3 (NTH n antColony))) (LIST-LENGTH bestPath))
                 (PROGN
                     (SETF goalCount (+ goalCount 1))
                     (SETF bestPath (NTH 3 (NTH n antColony)))
@@ -387,7 +387,8 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
             (SETF antColony (REMOVE (NTH n antColony) antColony :count 1))
         )
 
-        )
+        
+        
     )
 
     ;; For each grid cell
