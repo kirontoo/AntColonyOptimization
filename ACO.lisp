@@ -15,46 +15,55 @@
      )
 )
 
-(SETF gridStr "-----x-x--------x------x-----x-x-----x---------x---x----x---
---x--x-xxx--x---x-xx-xxxx-xx-x-------x-----x---x------x-x---
---x--x----x-x----------x-----x-xx-x-xx-----x---x---x--x-x---
---x--x-x--x-x---x-xxx-xx-----x-x-----xxx-x---------x--------
---x--x-x--x-x---x------xxxx--x-------------x-------x--x-x---
---x--x-x----x---x---x--x-------x-x-xx---x--xxxx--xxx--x-x---
---x----x--------x------xxxx----x-----x--x--x-------x--x-x---
------x--xx--x---x---x--x-----x-xxx--xx-----xx-x-xxx-xx--x---
-xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
--------x----x---x---x--x-----x-x-----x--x--x-------x----x---
------x-xxx--x---xxx-xx-x-xxx-xxxxxxxx-xxxxxxxxxx-xxxxx--x---
------x-x----x---x------------x---------------------x----x---
--------x---x----x------x----------x--x-----x--x-------------
---x----x---x----x------x----------x--x------------------x---
---xx--xx--------xx--xxxxx-xxxx-x--------x--x--x-xxx-x-------
---x--------xxx----x----x-------x--------x-----------x---x---
---x--------x----x-x-----xxxxxxxx-xxxxxxxxxxxxxxxxxxx-xxxxxxx
-----x-xxxxxx--x---x----x--x-----x-------x-------------------
---x-----------x-x---x-xx--------xxxx--xxx-------------------
---x--------x--x-x-x----x--x-xxx------x--xxxxxxxxx-xxxxx-xxxx
---x--------x----x------x--x----------x----------------------
-xxxxxxxx-xxxxxxxxxxxxx-x--x-----x-x-----x-------------------
----x----------x--x-----x--x-----x-x--x---xxxx--xx-xx-xxxxxxx
------x-x--x-x-x--x-----x--xx--xxx-xx----x-------x--x---x----
------x-------------x---x--x-----x----x--x-----x-x--------x--
----x---x--x-x------x---x--x-----xx--xx--x---x-x-x--x--------
-xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
----x--x--------------x-xxxx-xxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxx
-------x--------------x----x--x----x----------x-x--x---x-----
----x--xxxx-xxxx-xxxxx--x--x-------xxxxx-xx-----x--x---xx-x-x
----x--x----x-----x---x-x--x--x-------------x------x---x--x--
----x--xx-x-xx-xx-x-----x--x--xx--x-------x-x-x-x--x---x--x--
----x--x--------------x-x--x--x--x-xxxx-x-x-x-x-x------x--x--
----x--x--------------x-x-----x----x------x-x-x-x--x---x-----
----x----xxxxxx-xxxxxxx-x--x-------x------x-x-x-x--x---x--x--
----x--x--------------x-x--x--x--x-x--------x-x-x------------
-------x---x--x---x---x-x---xxxx-xxxxxxxxxxx-xx----x---x--x--
----x--x--x----x--x---x-x--x------------------x-x--x---x--x--
----x-----x----x------x-x--x------------------x-x--x------x--
+(SETF gridStr "--x-xxx
+x-----x
+x-xxx-x
+x---x-x
+xxx-xxx
+xxx-xxx
+xxx----
 ")
+
+;; (SETF gridStr "-----x-x--------x------x-----x-x-----x---------x---x----x---
+;; --x--x-xxx--x---x-xx-xxxx-xx-x-------x-----x---x------x-x---
+;; --x--x----x-x----------x-----x-xx-x-xx-----x---x---x--x-x---
+;; --x--x-x--x-x---x-xxx-xx-----x-x-----xxx-x---------x--------
+;; --x--x-x--x-x---x------xxxx--x-------------x-------x--x-x---
+;; --x--x-x----x---x---x--x-------x-x-xx---x--xxxx--xxx--x-x---
+;; --x----x--------x------xxxx----x-----x--x--x-------x--x-x---
+;; -----x--xx--x---x---x--x-----x-xxx--xx-----xx-x-xxx-xx--x---
+;; xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
+;; -------x----x---x---x--x-----x-x-----x--x--x-------x----x---
+;; -----x-xxx--x---xxx-xx-x-xxx-xxxxxxxx-xxxxxxxxxx-xxxxx--x---
+;; -----x-x----x---x------------x---------------------x----x---
+;; -------x---x----x------x----------x--x-----x--x-------------
+;; --x----x---x----x------x----------x--x------------------x---
+;; --xx--xx--------xx--xxxxx-xxxx-x--------x--x--x-xxx-x-------
+;; --x--------xxx----x----x-------x--------x-----------x---x---
+;; --x--------x----x-x-----xxxxxxxx-xxxxxxxxxxxxxxxxxxx-xxxxxxx
+;; ----x-xxxxxx--x---x----x--x-----x-------x-------------------
+;; --x-----------x-x---x-xx--------xxxx--xxx-------------------
+;; --x--------x--x-x-x----x--x-xxx------x--xxxxxxxxx-xxxxx-xxxx
+;; --x--------x----x------x--x----------x----------------------
+;; xxxxxxxx-xxxxxxxxxxxxx-x--x-----x-x-----x-------------------
+;; ---x----------x--x-----x--x-----x-x--x---xxxx--xx-xx-xxxxxxx
+;; -----x-x--x-x-x--x-----x--xx--xxx-xx----x-------x--x---x----
+;; -----x-------------x---x--x-----x----x--x-----x-x--------x--
+;; ---x---x--x-x------x---x--x-----xx--xx--x---x-x-x--x--------
+;; xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
+;; ---x--x--------------x-xxxx-xxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxx
+;; ------x--------------x----x--x----x----------x-x--x---x-----
+;; ---x--xxxx-xxxx-xxxxx--x--x-------xxxxx-xx-----x--x---xx-x-x
+;; ---x--x----x-----x---x-x--x--x-------------x------x---x--x--
+;; ---x--xx-x-xx-xx-x-----x--x--xx--x-------x-x-x-x--x---x--x--
+;; ---x--x--------------x-x--x--x--x-xxxx-x-x-x-x-x------x--x--
+;; ---x--x--------------x-x-----x----x------x-x-x-x--x---x-----
+;; ---x----xxxxxx-xxxxxxx-x--x-------x------x-x-x-x--x---x--x--
+;; ---x--x--------------x-x--x--x--x-x--------x-x-x------------
+;; ------x---x--x---x---x-x---xxxx-xxxxxxxxxxx-xx----x---x--x--
+;; ---x--x--x----x--x---x-x--x------------------x-x--x---x--x--
+;; ---x-----x----x------x-x--x------------------x-x--x------x--
+;; ")
 
 ;; @param str: grid in string form
 ;; @return: a list ( () () ... )
@@ -104,7 +113,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 ;; @param elem: list to insert
 ;; @return: list
 (DEFUN INSERT-N (l n elem)
-    (APPEND (SUBSEQ l 0 n) (APPEND elem (SUBSEQ l n (- (LIST-LENGTH l) 1))))
+    (APPEND (SUBSEQ l 0 n) (APPEND (LIST elem) (SUBSEQ l n (LIST-LENGTH l))))
 )
 
 ;; @param cur: current cell coordinates (y x)
@@ -213,7 +222,6 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
             )
         )
 	)
-
 	(RETURN-FROM depositToArea gr)
 )
 
@@ -272,11 +280,11 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 )
 
 (DEFUN moveAnt (ant grid)  ;(LIST (LIST x y) return (LIST path))         check l r u d
-    (IF (AND (= 39 (NTH 0 (NTH 0 ant)))     ;ant reached goal, set return bit
-                    (= 59 (NTH 1 (NTH 0 ant))))
+    (IF (AND (= (- (LIST-LENGTH grid) 1) (NTH 0 (NTH 0 ant)))     ;ant reached goal, set return bit
+                    (= (- (LIST-LENGTH (CAR grid)) 1) (NTH 1 (NTH 0 ant))))
         (PROGN 
             (SETF (NTH 1 ant) nil)
-            (SETF (NTH 3 ant) (LIST (LIST 39 59)))
+            (SETF (NTH 3 ant) (LIST (LIST (- (LIST-LENGTH grid) 1) (- (LIST-LENGTH (CAR grid)) 1))))
         )
     )
     (IF (NTH 1 ant)         ;check mode, forage or return
@@ -360,6 +368,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
         (IF (not (CADR (NTH n antColony)))
             (SETF grid (replaceCell (CAR (NTH n antColony)) (depositScent (CAR (NTH n antColony)) D grid) grid ))
         )
+
         ;; ants move to target cell -> add to tabu list
         (SETF movedAnt (moveAnt (NTH n antColony) grid))
         (SETF antColony (updateAntList (NTH n antColony) movedAnt antColony))
@@ -367,10 +376,10 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
         ;; if on goal cell, start return journey
         ;;      and update best short path found
         (IF (equal (CAR (NTH n antColony)) (LIST (- (LIST-LENGTH grid) 1) (- (LIST-LENGTH (CAR grid)) 1)))
-            (IF (< (LIST-LENGTH (NTH 3 (NTH n antColony))) (LIST-LENGTH bestPath))
+            (IF (OR (< (LIST-LENGTH (NTH 2 (NTH n antColony))) (LIST-LENGTH bestPath)) (= (LIST-LENGTH bestPath) 0))
                 (PROGN
                     (SETF goalCount (+ goalCount 1))
-                    (SETF bestPath (NTH 3 (NTH n antColony)))
+                    (SETF bestPath (NTH 2 (NTH n antColony)))
                     (FORMAT "~%reached goal. current best path: ~a~%" bestPath)
                 )
             )
@@ -378,7 +387,11 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 
         ;; check if ant is in return mode and have reached the starting point.
         (IF (AND (EQUAL (CAR (NTH n antColony)) (LIST 0 0)) (NOT (CADR (NTH n antColony))))
-            (SETF antColony (REMOVE (NTH n antColony) antColony :count 1))
+
+            ;; (SETF antColony (REMOVE (NTH n antColony) antColony :count 1))
+            (PROGN 
+            (SETF goalCount (+ goalCount 1))
+            (FORMAT t "~%ant reached goal and starting point: ~a~%" (NTH n antColony)))
         )
     )
 
@@ -394,7 +407,6 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 
             ;; each grid cell subtract SR from Scent value
             (SETF grid (replaceCell (LIST y x) (LIST (CAR cell) (FLOAT (- (CADR cell) srVal))) grid))
-
             ;; deposit 1/5 of srval to adjacent cells
             (SETF grid (depositToArea (LIST y x) srVal grid))
         )
@@ -405,5 +417,4 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
     (IF (>= 0 (LIST-LENGTH antColony))
     	(SETF antColony (APPEND antColony (initAnt)))
     )
-    (PRINT (LIST-LENGTH antColony))
 )

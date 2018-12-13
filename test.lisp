@@ -349,11 +349,12 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
         ;; if on goal cell, start return journey
         ;;      and update best short path found
         (IF (equal (CAR (NTH n antColony)) (LIST (- (LIST-LENGTH grid) 1) (- (LIST-LENGTH (CAR grid)) 1)))
-            (IF (< (LIST-LENGTH (NTH 3 (NTH n antColony))) (LIST-LENGTH bestPath))
+            (IF (OR (< (LIST-LENGTH (NTH 3 (NTH n antColony))) (LIST-LENGTH bestPath)) (= (LIST-LENGTH bestPath) 0))
+            ;; (IF (< (LIST-LENGTH (NTH 3 (NTH n antColony))) (LIST-LENGTH bestPath))
                 (PROGN
                     (SETF goalCount (+ goalCount 1))
-                    (SETF bestPath (NTH 3 (NTH n antColony)))
-                    (FORMAT "~%reached goal. current best path: ~a~%" bestPath)
+                    (SETF bestPath (NTH 2 (NTH n antColony)))
+                    (FORMAT t "~%reached goal. current best path length: ~a~%" (LIST-LENGTH bestPath))
                 )
             )
         ) ;;TODO: change ant to return mode
@@ -366,6 +367,7 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
                 (IF (NOT (MEMBER (NTH n antColony) doneList :test #'equal))
                     (PROGN
                         (FORMAT t "~%ant ~a is done. ants done: ~a" n (+ 1 (LIST-LENGTH doneList)))
+                        ;; (FORMAT t "~%ant: ~a" (NTH n antColony))
                         (SETQ doneList (APPEND doneList (LIST (NTH n antColony))))
                     )
                 )
@@ -386,7 +388,7 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
             (SETF srVal (getSR cell))
 
             ;; each grid cell subtract SR from Scent value
-            ;(SETF grid (replaceCell (LIST y x) (LIST (CAR cell) (FLOAT (- (CADR cell) srVal))) grid))
+            (SETF grid (replaceCell (LIST y x) (LIST (CAR cell) (FLOAT (- (CADR cell) srVal))) grid))
 
             ;; deposit 1/5 of srval to adjacent cells
             ;(SETF grid (depositToArea (LIST y x) srVal grid))
