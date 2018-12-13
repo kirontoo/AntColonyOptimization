@@ -183,34 +183,42 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 
 	;; deposit to cell above (y-1 x)
 	(IF (getCell (- (CAR pos) 1) (CADR pos) gr)
-		(progn
-			(SETF cell( depositScent (LIST (- (CAR pos) 1) (CADR pos) g) depositVal gr))
-			(SETF gr (replaceCell (LIST (- (CAR pos) 1) (CADR pos)) cell gr))
-		)
+        (IF (EQUAL "-" (CAR (getCell (- (CAR pos) 1) (CADR pos) gr)))
+            (progn
+			    (SETF cell( depositScent (LIST (- (CAR pos) 1) (CADR pos) g) depositVal gr))
+			    (SETF gr (replaceCell (LIST (- (CAR pos) 1) (CADR pos)) cell gr))
+		    )
+        )
 	)
 
 	;; deposit to cell below
 	(IF (getCell (+ (CAR pos) 1) (CADR pos) gr)
-		(progn
-			(SETF cell( depositScent (LIST (+ (CAR pos) 1) (CADR pos) g) depositVal gr))
-			(SETF gr (replaceCell (LIST (+ (CAR pos) 1) (CADR pos)) cell gr))
-		)
+        (IF (EQUAL "-" (getCell (+ (CAR pos) 1) (CADR pos) gr))
+            (progn
+                (SETF cell( depositScent (LIST (+ (CAR pos) 1) (CADR pos) g) depositVal gr))
+                (SETF gr (replaceCell (LIST (+ (CAR pos) 1) (CADR pos)) cell gr))
+            )
+        )
 	)
 
 	;; deposit to cell on left
 	(IF (getCell (CAR pos) (- (CADR pos) 1) gr)
-		(progn
-			(SETF cell( depositScent (LIST (CAR pos) (- (CADR pos) 1) g) depositVal gr))
-			(SETF gr (replaceCell (LIST (CAR pos) (- (CADR pos) 1)) cell gr))
-		)
+        (IF (EQUAL "-" (getCell (CAR pos) (- (CADR pos) 1) gr))
+            (progn
+                (SETF cell( depositScent (LIST (CAR pos) (- (CADR pos) 1) g) depositVal gr))
+                (SETF gr (replaceCell (LIST (CAR pos) (- (CADR pos) 1)) cell gr))
+            )
+        )
 	)
 
 	;;deposit to cell on right
 	(IF (getCell (CAR pos) (+ (CADR pos) 1) gr)
-		(progn
-			(SETF cell( depositScent (LIST (CAR pos) (+ (CADR pos) 1) g) depositVal gr))
-			(SETF gr (replaceCell (LIST (CAR pos) (+ (CADR pos) 1)) cell gr))
-		)
+        (IF (EQUAL "-" (getCell (CAR pos) (+ (CADR pos) 1) gr))
+            (progn
+                (SETF cell( depositScent (LIST (CAR pos) (+ (CADR pos) 1) g) depositVal gr))
+                (SETF gr (replaceCell (LIST (CAR pos) (+ (CADR pos) 1)) cell gr))
+            )
+        )
 	)
 
 	(RETURN-FROM depositToArea gr)
@@ -377,6 +385,8 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
         ;; check if ant is in return mode and have reached the starting point.
        (IF (AND (EQUAL (CAR (NTH n antColony)) (LIST 0 0)) (NOT (CADR (NTH n antColony))))
             (SETF antColony (REMOVE (NTH n antColony) antColony :count 1))
+        )
+
         )
     )
 
