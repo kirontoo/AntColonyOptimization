@@ -15,7 +15,8 @@
      )
 )
 
-(SETF gridStr "-----x-x--------x------x-----x-x-----x---------x---x----x---
+(SETF gridStr "
+-----x-x--------x------x-----x-x-----x---------x---x----x---
 --x--x-xxx--x---x-xx-xxxx-xx-x-------x-----x---x------x-x---
 --x--x----x-x----------x-----x-xx-x-xx-----x---x---x--x-x---
 --x--x-x--x-x---x-xxx-xx-----x-x-----xxx-x---------x--------
@@ -325,10 +326,11 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
 ;; ============MAIN LOOP===============
 (SETF goalCount 0)
 (SETF antColony (initAnt))
-(PRINT antColony)
 (SETF grid grid-list)
 (SETF bestPath ())
 (SETF doneList ())
+
+(FORMAT t "STARTING PROGRAM~%~%")
 ;( LOOP WHILE ( < goalCount 1)
 (LOOP WHILE (< (LIST-LENGTH doneList) 50)
     do
@@ -349,12 +351,13 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
         ;; if on goal cell, start return journey
         ;;      and update best short path found
         (IF (equal (CAR (NTH n antColony)) (LIST (- (LIST-LENGTH grid) 1) (- (LIST-LENGTH (CAR grid)) 1)))
-            (IF (OR (< (LIST-LENGTH (NTH 3 (NTH n antColony))) (LIST-LENGTH bestPath)) (= (LIST-LENGTH bestPath) 0))
+            (IF (OR (< (LIST-LENGTH (NTH 2 (NTH n antColony))) (LIST-LENGTH bestPath)) (= (LIST-LENGTH bestPath) 0))
             ;; (IF (< (LIST-LENGTH (NTH 3 (NTH n antColony))) (LIST-LENGTH bestPath))
                 (PROGN
                     (SETF goalCount (+ goalCount 1))
+                    (FORMAT t "reached goal. ant path length: ~a ~% current best path length: ~a~%" (LIST-LENGTH (NTH 2 (NTH n antColony))) (LIST-LENGTH bestPath))
                     (SETF bestPath (NTH 2 (NTH n antColony)))
-                    (FORMAT t "~%reached goal. current best path length: ~a~%" (LIST-LENGTH bestPath))
+                    (FORMAT t "new bestpath length: ~a ~%path: ~a~%" (LIST-LENGTH bestPath) bestPath)
                 )
             )
         ) ;;TODO: change ant to return mode
@@ -366,7 +369,7 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
             (PROGN
                 (IF (NOT (MEMBER (NTH n antColony) doneList :test #'equal))
                     (PROGN
-                        (FORMAT t "~%ant ~a is done. ants done: ~a" n (+ 1 (LIST-LENGTH doneList)))
+                        (FORMAT t "~%ant ~a is done. ants done: ~a~%" n (+ 1 (LIST-LENGTH doneList)))
                         ;; (FORMAT t "~%ant: ~a" (NTH n antColony))
                         (SETQ doneList (APPEND doneList (LIST (NTH n antColony))))
                     )
@@ -391,7 +394,7 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
             (SETF grid (replaceCell (LIST y x) (LIST (CAR cell) (FLOAT (- (CADR cell) srVal))) grid))
 
             ;; deposit 1/5 of srval to adjacent cells
-            ;(SETF grid (depositToArea (LIST y x) srVal grid))
+            (SETF grid (depositToArea (LIST y x) srVal grid))
         )
     )
 
@@ -401,3 +404,4 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
     	(SETF antColony (APPEND antColony (initAnt)))
     )
 )
+(FORMAT t "~%~% PROGRAM END.")
