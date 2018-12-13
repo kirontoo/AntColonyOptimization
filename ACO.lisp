@@ -230,7 +230,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 	(SETF n (POSITION ant list))
 	(SETF list (REMOVE ant list :count 1) )
 	(IF (= n (LIST-LENGTH list))
-		(RETURN-FROM updateAntList (APPEND list newAnt))
+		(RETURN-FROM updateAntList (APPEND list (LIST newAnt)))
 		(RETURN-FROM updateAntList (INSERT-N list n newAnt))
 	)
 )
@@ -357,8 +357,6 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 (SETF grid grid-list)
 (SETF bestPath ())
 
-;; (printGrid grid )
-
 ( LOOP WHILE ( /= goalCount 1)
     do
     (LOOP for n from 0 to (- (LIST-LENGTH antColony) 1)
@@ -378,12 +376,13 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
                 (PROGN
                     (SETF goalCount (+ goalCount 1))
                     (SETF bestPath (NTH 3 (NTH n antColony)))
+                    (FORMAT "~%reached goal. current best path: ~a~%" bestPath)
                 )
             )
         ) ;;TODO: change ant to return mode
 
         ;; check if ant is in return mode and have reached the starting point.
-       (IF (AND (EQUAL (CAR (NTH n antColony)) (LIST 0 0)) (NOT (CADR (NTH n antColony))))
+        (IF (AND (EQUAL (CAR (NTH n antColony)) (LIST 0 0)) (NOT (CADR (NTH n antColony))))
             (SETF antColony (REMOVE (NTH n antColony) antColony :count 1))
         )
     )
@@ -408,7 +407,6 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 
     ;; place new ant on starting cell
     ;;continue to place a new ant until 50 ants are on the grid
-    (PRINT "TEST")
     (IF (>= 50 (LIST-LENGTH antColony))
     	(SETF antColony (APPEND antColony (initAnt)))
     )
