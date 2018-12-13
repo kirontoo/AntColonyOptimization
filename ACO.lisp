@@ -3,8 +3,9 @@
 (defconstant E 0.1) ;; scent evaporation value for scent reduction
 (defconstant D 10) ;; amount of scent to deposit
 
+;; Ant structure: ( (y x) MODE (Tabu list) (path list) )
 (DEFUN initAnt ()
-    (RETURN-FROM initAnt (LIST (LIST (LIST 0 0) nil (LIST (LIST 0 0)) (LIST ()))))
+    (RETURN-FROM initAnt (LIST (LIST (LIST 0 0) T (LIST (LIST 0 0)) (LIST ()))))
 )
 
 (DEFUN printGrid (g)
@@ -361,15 +362,22 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
         ;; ants move to target cell -> add to tabu list
         (SETF movedAnt (moveAnt (NTH n antColony) grid))
         (SETF antColony (updateAntList (NTH n antColony) movedAnt antColony))
-        ;;TODO: tabu list
 
         ;; if on goal cell, start return journey
         ;;      and update best short path found
         (IF (= (CAR (NTH n antColony)) (LIST 39 59))
             (IF (< (NTH 3 (NTH n antColony)) (LIST-LENGTH bestPath))
-                (SETF bestPath (NTH 3 (NTH n antColony)))
+                (PROGN
+                    (SETF goalCount (+ goalCount 1))
+                    (SETF bestPath (NTH 3 (NTH n antColony)))
+                )
             )
         ) ;;TODO: change ant to return mode
+
+        ;; check if ant is in return mode and have reached the starting point.
+       (IF (AND (EQUAL (CAR (NTH n antColony)) (LIST 0 0)) (NOT (CADR (NTH n antColony))))
+            (SETF antColony (REMOVE (NTH n antColony) antColony :count 1))
+        )
     )
 
     ;; For each grid cell
