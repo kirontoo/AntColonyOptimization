@@ -132,19 +132,9 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 ;; @param: a cell from the grid
 ;; @return: float - scent reduction value
 (DEFUN getSR (cell) 
-    (PRINT "inside sr")
-    (PRINT cell)
 	(IF (> 1 (CADR cell))
-        (PROGN
-        (PRINT "inside if")
 		(RETURN-FROM getSR (FLOAT 0))
-
-        )
-        (PROGN 
-            (PRINT "in else")
 		(RETURN-FROM getSR (* (CADR cell) E))
-
-        )
     )
 )
 
@@ -163,7 +153,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 (DEFUN replaceCell (pos rCell g) 
 	 ;; insert rCell into the row
 	(IF (= (CADR pos) (- (LIST-LENGTH (NTH (CAR pos) g)) 1))
-		(SETF nr (APPEND (REMOVE (getCell (CAR pos) (CADR pos) g) (NTH (CAR pos) g)) rCell))
+		(SETF nr (APPEND (REMOVE (getCell (CAR pos) (CADR pos) g) (NTH (CAR pos) g)) (LIST rCell)))
 		(SETF nr (INSERT-N (REMOVE (getCell (CAR pos) (CADR pos) g) (NTH (CAR pos) g)) (CADR pos) rCell))
 	)
 
@@ -191,44 +181,39 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 (DEFUN depositToArea (pos srVal gr)
 	(SETF depositVal (FLOAT (/ srVal 5)))
 
-    (PRINT "in deposit")
-
 	;; deposit to cell above (y-1 x)
 	(IF (getCell (- (CAR pos) 1) (CADR pos) gr)
         (IF (EQUAL "-" (CAR (getCell (- (CAR pos) 1) (CADR pos) gr)))
             (progn
-			    (SETF cell( depositScent (LIST (- (CAR pos) 1) (CADR pos) gr) depositVal gr))
+			    (SETF cell ( depositScent (LIST (- (CAR pos) 1) (CADR pos) gr) depositVal gr))
 			    (SETF gr (replaceCell (LIST (- (CAR pos) 1) (CADR pos)) cell gr))
 		    )
         )
 	)
 
-    (PRINT "1")
 	;; deposit to cell below
 	(IF (getCell (+ (CAR pos) 1) (CADR pos) gr)
         (IF (EQUAL "-" (CAR (getCell (+ (CAR pos) 1) (CADR pos) gr)))
             (progn
-                (SETF cell( depositScent (LIST (+ (CAR pos) 1) (CADR pos) gr) depositVal gr))
+                (SETF cell ( depositScent (LIST (+ (CAR pos) 1) (CADR pos) gr) depositVal gr))
                 (SETF gr (replaceCell (LIST (+ (CAR pos) 1) (CADR pos)) cell gr))
             )
         )
 	)
-(PRINT "2")
 	;; deposit to cell on left
 	(IF (getCell (CAR pos) (- (CADR pos) 1) gr)
         (IF (EQUAL "-" (CAR (getCell (CAR pos) (- (CADR pos) 1) gr)))
             (progn
-                (SETF cell( depositScent (LIST (CAR pos) (- (CADR pos) 1) gr) depositVal gr))
+                (SETF cell ( depositScent (LIST (CAR pos) (- (CADR pos) 1) gr) depositVal gr))
                 (SETF gr (replaceCell (LIST (CAR pos) (- (CADR pos) 1)) cell gr))
             )
         )
 	)
-(PRINT "3")
 	;;deposit to cell on right
 	(IF (getCell (CAR pos) (+ (CADR pos) 1) gr)
         (IF (EQUAL "-" (CAR (getCell (CAR pos) (+ (CADR pos) 1) gr)))
             (progn
-                (SETF cell( depositScent (LIST (CAR pos) (+ (CADR pos) 1) gr) depositVal gr))
+                (SETF cell (depositScent (LIST (CAR pos) (+ (CADR pos) 1) gr) depositVal gr))
                 (SETF gr (replaceCell (LIST (CAR pos) (+ (CADR pos) 1)) cell gr))
             )
         )
@@ -372,8 +357,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 (SETF grid grid-list)
 (SETF bestPath ())
 
-
-(PRINT grid)
+;; (printGrid grid )
 
 ( LOOP WHILE ( /= goalCount 1)
     do
@@ -381,7 +365,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
         do
         ;; returning ants deposit scent to current position
         (IF (not (CADR (NTH n antColony)))
-            (SETF grid (depositScent (CAR (NTH n antColony)) D grid))
+            (SETF grid (replaceCell (CAR (NTH n antColony)) (depositScent (CAR (NTH n antColony)) D grid) grid ))
         )
         ;; ants move to target cell -> add to tabu list
         (SETF movedAnt (moveAnt (NTH n antColony) grid))
@@ -409,19 +393,15 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
         do
         (LOOP for x from 0 to (- (LIST-LENGTH (NTH y grid)) 1)
             do
-            (PRINT "in loop")
-
             (SETF cell (getCell y x grid))
-            (PRINT cell)
-            (PRINT (LIST y x))
+
             ;; compute scent reduction to all grid cells
-            (PRINT "going to get sr")
             (SETF srVal (getSR cell))
+
             ;; each grid cell subtract SR from Scent value
-            (PRINT "going to replace cell")
             (SETF grid (replaceCell (LIST y x) (LIST (CAR cell) (FLOAT (- (CADR cell) srVal))) grid))
+
             ;; deposit 1/5 of srval to adjacent cells
-            (PRINT "going to deposit area")
             (SETF grid (depositToArea (LIST y x) srVal grid))
         )
     )
@@ -429,7 +409,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
     ;; place new ant on starting cell
     ;;continue to place a new ant until 50 ants are on the grid
     (PRINT "TEST")
-    (IF (>= 50 (LIST-LENGTH antList))
+    (IF (>= 50 (LIST-LENGTH antColony))
     	(SETF antColony (APPEND antColony (initAnt)))
     )
 )
