@@ -27,7 +27,6 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
 -------x----x---x---x--x-----x-x-----x--x--x-------x----x---
 -----x-xxx--x---xxx-xx-x-xxx-xxxxxxxx-xxxxxxxxxx-xxxxx--x---
 -----x-x----x---x------------x---------------------x----x---
-xx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-x
 -------x---x----x------x----------x--x-----x--x-------------
 --x----x---x----x------x----------x--x------------------x---
 --xx--xx--------xx--xxxxx-xxxx-x--------x--x--x-xxx-x-------
@@ -105,11 +104,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 ;; @param elem: list to insert
 ;; @return: list
 (DEFUN INSERT-N (l n elem)
-    (COND
-        ((NULL l) ())
-        ((= n 0) (CONS elem l))
-        (T (CONS (CAR l) (INSERT-N (CDR l) (- n 1) elem)))
-    )
+    (APPEND (SUBSEQ l 0 n) (APPEND elem (SUBSEQ l n (- (LIST-LENGTH l) 1))))
 )
 
 ;; @param cur: current cell coordinates (y x)
@@ -351,13 +346,13 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 )
 
 ;; ============MAIN LOOP===============
-(SETF goalCount 0)
+(SETF goalCount 0)      ;; amount of ants that have reached the goal
 (SETF antColony (initAnt))
 (PRINT antColony)
 (SETF grid grid-list)
 (SETF bestPath ())
 
-( LOOP WHILE ( /= goalCount 1)
+( LOOP WHILE ( < goalCount 1)
     do
     (LOOP for n from 0 to (- (LIST-LENGTH antColony) 1)
         do
@@ -379,7 +374,7 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
                     (FORMAT "~%reached goal. current best path: ~a~%" bestPath)
                 )
             )
-        ) ;;TODO: change ant to return mode
+        )
 
         ;; check if ant is in return mode and have reached the starting point.
         (IF (AND (EQUAL (CAR (NTH n antColony)) (LIST 0 0)) (NOT (CADR (NTH n antColony))))
@@ -407,7 +402,8 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
 
     ;; place new ant on starting cell
     ;;continue to place a new ant until 50 ants are on the grid
-    (IF (>= 50 (LIST-LENGTH antColony))
+    (IF (>= 0 (LIST-LENGTH antColony))
     	(SETF antColony (APPEND antColony (initAnt)))
     )
+    (PRINT (LIST-LENGTH antColony))
 )
