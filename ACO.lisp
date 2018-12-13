@@ -324,24 +324,24 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
                     (SETF (NTH 2 ant) (APPEND (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove))) (NTH 2 ant))) ;append old position to front of tabu
                 )   
             )
-            (RETURN-FROM moveAnt (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove)) (NTH 1 ant) (NTH 2 ant) (LIST ()) (APPEND (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove))) (NTH 4 ant))))
+            (RETURN-FROM moveAnt (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove)) (NTH 1 ant) (NTH 2 ant) (LIST ())))
         )
         (PROGN      ;return
-            (IF (> (LIST-LENGTH (NTH 4 ant)) 1) ;not back yet
+            (IF (> (LIST-LENGTH (NTH 2 ant)) 1) ;not back yet
                 (PROGN
                     ;add scent
                     ;to forget dead ends, look for greatest nth occurence of cell, jump there
                     (SETQ nextMove ())
                     (SETQ leastRecentCount ())
-                    (LOOP for count from 0 to (LIST-LENGTH (NTH 4 ant))
+                    (LOOP for count from 0 to (LIST-LENGTH (NTH 2 ant))
                         do
-                        (IF (equal (NTH 1 (NTH 4 ant)) (NTH count (NTH 4 ant)))
+                        (IF (equal (NTH 1 (NTH 2 ant)) (NTH count (NTH 2 ant)))
                             (PROGN
                                 (SETQ leastRecentCount count)
                             )
                         )
                     )
-		            (RETURN-FROM moveAnt (LIST (NTH leastRecentCount (NTH 4 ant)) (NTH 1 ant) (NTHCDR leastRecentCount (NTH 2 ant)) (APPEND (LIST (NTH leastRecentCount (NTH 4 ant))) (NTH 3 ant)) (NTHCDR leastRecentCount (NTH 4 ant))))
+		            (RETURN-FROM moveAnt (LIST (NTH leastRecentCount (NTH 2 ant)) (NTH 1 ant) (NTHCDR leastRecentCount (NTH 2 ant)) (APPEND (LIST (NTH leastRecentCount (NTH 2 ant))) (NTH 3 ant))))
                     
                     ;for testing purposes, does not include best path (nth 3 ant)
                     ;(RETURN-FROM moveAnt (LIST (NTH leastRecentCount (NTH 2 ant)) (NTH 1 ant) (NTHCDR leastRecentCount (NTH 2 ant))))
