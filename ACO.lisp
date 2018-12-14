@@ -367,10 +367,10 @@ xxxxxxxxxxxxxxxxxxxx--xx--------x----x--x---x---x------x-x--
         ;; if on goal cell, start return journey
         ;;      and update best short path found
         (IF (equal (CAR (NTH n antColony)) (LIST (- (LIST-LENGTH grid) 1) (- (LIST-LENGTH (CAR grid)) 1)))
-            (IF (< (LIST-LENGTH (NTH 3 (NTH n antColony))) (LIST-LENGTH bestPath))
+            (IF (OR (< (LIST-LENGTH (NTH 2 (NTH n antColony))) (LIST-LENGTH bestPath)) (= (LIST-LENGTH bestPath) 0))
                 (PROGN
                     (SETF goalCount (+ goalCount 1))
-                    (SETF bestPath (NTH 3 (NTH n antColony)))
+                    (SETF bestPath (NTH 2 (NTH n antColony)))
                     (FORMAT "~%reached goal. current best path: ~a~%" bestPath)
                 )
             )
