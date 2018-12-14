@@ -249,39 +249,19 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
 )
 
 (DEFUN moveAnt (ant grid)  ;(LIST (LIST x y) return (LIST path))         check l r u d
-    (IF (AND (= 39 (NTH 0 (NTH 0 ant)))     ;ant reached goal, set return bit
-                    (= 59 (NTH 1 (NTH 0 ant))))
-        (PROGN 
-            (SETF (NTH 1 ant) nil)
-            (SETF (NTH 3 ant) (LIST (LIST 39 59)))
-        )
-    )
     (IF (NTH 1 ant)         ;check mode, forage or return
         (PROGN          ;forage
+            (IF (AND (= (- (LIST-LENGTH grid) 1) (NTH 0 (NTH 0 ant)))     ;ant reached goal, set return bit
+                    (= (- (LIST-LENGTH (NTH 0 grid)) 1) (NTH 1 (NTH 0 ant))))
+                (RETURN-FROM moveAnt (LIST (NTH 0 ant) nil (NTH 2 ant) (LIST (LIST 39 59))))
+            )
             (SETQ possibleMoves (moveList ant grid))
             (SETQ bestMove ())
             (SETQ chosenMove())
             (IF (= (LIST-LENGTH possibleMoves) 0)       ;no possible moves, go back
                 (PROGN
-                    (SETQ patternFound nil)                                         ;pattern match to allow ant to backtrack more than 1 cell
-                    (LOOP for count from 0 to (- (LIST-LENGTH (NTH 2 ant)) 1)       ;backtrack more than 1
-                        do
-                        (IF (equal (NTH 1 (NTH 2 ant)) (NTH count (NTH 2 ant)))     ;find [decisionCell] in path
-                            (IF (AND (equal (NTH 0 (NTH 2 ant)) (NTH (+ count 1) (NTH 2 ant))))
-                                (PROGN
-                                    (SETQ patternFound t)                           ;found repeating pattern of 2 cells. Go to cell before the 2 cells
-                                    (SETQ chosenMove (LIST 0 (NTH 0 (NTH (+ count 2) (NTH 2 ant))) (NTH 1 (NTH (+ count 2) (NTH 2 ant))) ))
-                                )
-                            )
-                        )
-                    )
-                    (IF patternFound  
-                        (SETF (NTH 2 ant) (APPEND (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove))) (NTH 2 ant)))
-                        (PROGN ;backtrack only 1
-                            (SETQ chosenMove (LIST 0 (NTH 0 (NTH 1 (NTH 2 ant))) (NTH 1 (NTH 1 (NTH 2 ant)))))
-                            (SETF (NTH 2 ant) (APPEND (LIST (LIST (NTH 0 (NTH 1 (NTH 2 ant))) (NTH 1 (NTH 1 (NTH 2 ant))))) (NTH 2 ant)))
-                        )
-                    )
+                    (SETQ chosenMove (LIST 0 (NTH 0 (NTH 1 (NTH 2 ant))) (NTH 1 (NTH 1 (NTH 2 ant)))))
+                    (SETF (NTH 2 ant) (LIST (LIST (NTH 0 (NTH 1 (NTH 2 ant))) (NTH 1 (NTH 1 (NTH 2 ant))))))
                 )
                 (PROGN 
                     (SETQ chosenMove (NTH 0 possibleMoves))     ;starts chosenMove at first of possibleMoves
@@ -294,32 +274,39 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
                     (SETF (NTH 2 ant) (APPEND (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove))) (NTH 2 ant))) ;append old position to front of tabu
                 )   
             )
+            (IF (< 7 (LIST-LENGTH (NTH 2 ant)))
+                (SETF (NTH 2 ant) (SUBSEQ (NTH 2 ant) 0 7))
+            )
             (RETURN-FROM moveAnt (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove)) (NTH 1 ant) (NTH 2 ant) (APPEND (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove))) (NTH 3 ant))))
         )
         (PROGN      ;return
-            (IF (> (LIST-LENGTH (NTH 2 ant)) 1) ;not back yet
+            (SETQ returnMoves (moveList ant grid))
+            (SETQ chosenMove ())
+            (IF (= (LIST-LENGTH returnMoves) 0)       ;no possible moves, go back
                 (PROGN
-                    ;add scent
-                    ;to forget dead ends, look for greatest nth occurence of cell, jump there
-                    (SETQ nextMove ())
-                    (SETQ leastRecentCount ())
-                    (LOOP for count from 0 to (LIST-LENGTH (NTH 2 ant))
-                        do
-                        (IF (equal (NTH 1 (NTH 2 ant)) (NTH count (NTH 2 ant)))
-                            (PROGN
-                                (SETQ leastRecentCount count)
-                            )
+                    (SETQ chosenMove (LIST 0 (NTH 0 (NTH 1 (NTH 2 ant))) (NTH 1 (NTH 1 (NTH 2 ant))))) ;backtrack 1
+                    (SETF (NTH 2 ant) (LIST (LIST (NTH 0 (NTH 0 (NTH 2 ant))) (NTH 1 (NTH 0 (NTH 2 ant))))))
+                )
+                (PROGN 
+                    (SETQ chosenMove (NTH 0 returnMoves))     ;starts chosenMove at first of returnMoves
+                    (LOOP for count from 0 to (- (LIST-LENGTH returnMoves) 1) ;compare with rest of returnMoves
+                        do                                                      ;set chosenMove to (highest heuristic y x)
+                        (IF (AND (= 0 (NTH 1 (NTH count returnMoves))) (= 0 (NTH 2 (NTH count returnMoves))))
+                            (RETURN-FROM moveAnt (LIST (LIST 0 0) (NTH 1 ant) (NTH 2 ant) (APPEND (LIST (LIST 0 0)) (NTH 3 ant))))
+                        )
+                        (IF (> (NTH 0 chosenMove) (NTH 0 (NTH count returnMoves)))   
+                            (SETQ chosenMove (NTH count returnMoves))
                         )
                     )
-		            (RETURN-FROM moveAnt (LIST (NTH leastRecentCount (NTH 2 ant)) (NTH 1 ant) (NTHCDR leastRecentCount (NTH 2 ant)) (APPEND (LIST (NTH leastRecentCount (NTH 2 ant))) (NTH 3 ant))))
-                    
-                    ;for testing purposes, does not include best path (nth 3 ant)
-                    ;(RETURN-FROM moveAnt (LIST (NTH leastRecentCount (NTH 2 ant)) (NTH 1 ant) (NTHCDR leastRecentCount (NTH 2 ant))))
-                )
-                (RETURN-FROM moveAnt ant)   ;made it back, do nothing
+                    (SETF (NTH 2 ant) (APPEND (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove))) (NTH 2 ant))) ;append old position to front of tabu
+                )   
             )
+            (IF (< 7 (LIST-LENGTH (NTH 2 ant)))
+                (SETF (NTH 2 ant) (SUBSEQ (NTH 2 ant) 0 7))
+            )
+            (RETURN-FROM moveAnt (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove)) (NTH 1 ant) (NTH 2 ant) (APPEND (LIST (LIST (NTH 1 chosenMove) (NTH 2 chosenMove))) (NTH 3 ant)) ))
         )
-    )
+    )   
 )
 
 ;; ============MAIN LOOP===============
