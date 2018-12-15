@@ -24,3 +24,7 @@ Extra Features:
 no extra features.
 
 Bugs:
+
+Notes:
+* returning uses a backtrack algorithm.
+* limit on tabu is removed.
