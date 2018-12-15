@@ -325,11 +325,11 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
 ;; ============MAIN LOOP===============
 (SETF goalCount 0)
 (SETF antColony (initAnt))
-(PRINT antColony)
 (SETF grid grid-list)
 (SETF bestPath ())
 (SETF doneList ())
-;( LOOP WHILE ( < goalCount 1)
+
+(PRINT "Running ACO program")
 (LOOP WHILE (< (LIST-LENGTH doneList) 50)
     do
     (LOOP for n from 0 to (- (LIST-LENGTH antColony) 1)
@@ -342,20 +342,7 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
         (SETF movedAnt (moveAnt (NTH n antColony) grid))
         (SETF antColony (updateAntList (NTH n antColony) movedAnt antColony))
 
-        ;; if on goal cell, start return journey
-        ;;      and update best short path found
-        (IF (equal (CAR (NTH n antColony)) (LIST (- (LIST-LENGTH grid) 1) (- (LIST-LENGTH (CAR grid)) 1)))
-            (IF (< (LIST-LENGTH (NTH 3 (NTH n antColony))) (LIST-LENGTH bestPath))
-                (PROGN
-                    (SETF goalCount (+ goalCount 1))
-                    (SETF bestPath (NTH 3 (NTH n antColony)))
-                    (FORMAT t "~%reached goal. current best path: ~a~%" bestPath)
-                )
-            )
-        ) ;;TODO: change ant to return mode
-
         ;; check if ant is in return mode and have reached the starting point.
-
         ;; check if ant reached goal, put on on doneList
         (IF (AND (EQUAL (CAR (NTH n antColony)) (LIST (- (LIST-LENGTH grid) 1) (- (LIST-LENGTH (NTH 0 grid)) 1))) (NTH 1 (NTH n antColony)))
             (PROGN
@@ -380,8 +367,6 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
                     )
                 )
                 
-        ;    (FORMAT t "~%~a is home~%" n)
-        ;    (SETF antColony (REMOVE (NTH n antColony) antColony :count 1))
             )
         )
     )
