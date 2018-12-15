@@ -349,14 +349,15 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
         ;; if on goal cell, start return journey
         ;;      and update best short path found
         (IF (equal (CAR (NTH n antColony)) (LIST (- (LIST-LENGTH grid) 1) (- (LIST-LENGTH (CAR grid)) 1)))
-            (IF (< (LIST-LENGTH (NTH 3 (NTH n antColony))) (LIST-LENGTH bestPath))
+            (IF (OR (< (LIST-LENGTH (NTH 2 (NTH n antColony))) (LIST-LENGTH bestPath)) (= (LIST-LENGTH bestPath) 0))
                 (PROGN
                     (SETF goalCount (+ goalCount 1))
-                    (SETF bestPath (NTH 3 (NTH n antColony)))
-                    (FORMAT "~%reached goal. current best path: ~a~%" bestPath)
+                    (FORMAT t "reached goal. ant path length: ~a ~% current best path length: ~a~%" (LIST-LENGTH (NTH 2 (NTH n antColony))) (LIST-LENGTH bestPath))
+                    (SETF bestPath (NTH 2 (NTH n antColony)))
+                    (FORMAT t "~%reached goal. current best path: ~a~%" bestPath)
                 )
             )
-        ) ;;TODO: change ant to return mode
+        )
 
         ;; check if ant is in return mode and have reached the starting point.
 
@@ -369,8 +370,6 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
                         (SETQ doneList (APPEND doneList (LIST (NTH n antColony))))
                     )
                 )
-        ;    (FORMAT t "~%~a is home~%" n)
-        ;    (SETF antColony (REMOVE (NTH n antColony) antColony :count 1))
             )
         )
     )
@@ -386,10 +385,10 @@ xx--xx-x----x-------x--------x-x-----x--x--x-------x--------
             (SETF srVal (getSR cell))
 
             ;; each grid cell subtract SR from Scent value
-            ;(SETF grid (replaceCell (LIST y x) (LIST (CAR cell) (FLOAT (- (CADR cell) srVal))) grid))
+            (SETF grid (replaceCell (LIST y x) (LIST (CAR cell) (FLOAT (- (CADR cell) srVal))) grid))
 
             ;; deposit 1/5 of srval to adjacent cells
-            ;(SETF grid (depositToArea (LIST y x) srVal grid))
+            (SETF grid (depositToArea (LIST y x) srVal grid))
         )
     )
 
